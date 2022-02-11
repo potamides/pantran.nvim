@@ -30,8 +30,10 @@ function command.translate(srow, erow, opts)
     local engine = perapera.engines[opts.engine or "default"]
     local translation = engine:translate(text, opts.source, opts.target, opts)
 
-    vim.fn.append(erow, vim.split(translation, "\n"))
-    vim.fn.deletebufline('.', srow, erow)
+    if vim.bo.modifiable then
+      vim.fn.append(erow, vim.split(translation, "\n"))
+      vim.fn.deletebufline('%', srow, erow)
+    end
   end)
 end
 
