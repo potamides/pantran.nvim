@@ -1,4 +1,5 @@
 local perapera = require("perapera")
+local window = require("perapera.ui.window")
 
 local command = {
   subcommands = {
@@ -25,15 +26,20 @@ local command = {
 --end
 
 function command.translate(srow, erow, opts)
-  perapera.async.run(function()
-    local text = table.concat(vim.fn.getline(srow, erow), "\n")
-    local engine = perapera.engines[opts.engine or "default"]
-    local translation = engine:translate(text, opts.source, opts.target, opts)
+  --perapera.async.run(function()
+  --  local text = table.concat(vim.fn.getline(srow, erow), "\n")
+  --  local engine = perapera.engines[opts.engine or "default"]
+  --  local translation = engine:translate(text, opts.source, opts.target, opts)
 
-    if vim.bo.modifiable then
-      vim.fn.append(erow, vim.split(translation, "\n"))
-      vim.fn.deletebufline('%', srow, erow)
-    end
+  --  if vim.bo.modifiable then
+  --    vim.fn.append(erow, vim.split(translation, "\n"))
+  --    vim.fn.deletebufline('%', srow, erow)
+  --  end
+  --end)
+
+  perapera.async.run(function()
+    local engine = perapera.engines[opts.engine or "default"]
+    window.new(engine)
   end)
 end
 

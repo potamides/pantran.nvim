@@ -16,17 +16,24 @@ end
 -- run an async function (i.e. a function which contains a wrapped
 -- callback-style function somewhere in its call stack)
 function async.run(f, ...)
-  local co = coroutine.create(f)
-  local function exec(...)
+  local co, exec = coroutine.create(f)
+  exec = vim.schedule_wrap(function(...)
     local ok, data = coroutine.resume(co, ...)
     if not ok then
       error(debug.traceback(co, data))
     end
     if coroutine.status(co) ~= "dead" then
-      data(vim.schedule_wrap(exec))
+      data(exec)
     end
-  end
+  end)
   exec(...)
+end
+
+function async.closure(f, ...)
+  local args = {...}
+  return function(...)
+    async.run(f, unpack(vim.list_extend(args, {...})))
+  end
 end
 
 return async

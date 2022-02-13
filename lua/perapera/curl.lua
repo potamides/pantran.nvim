@@ -17,7 +17,7 @@ function curl:_spawn(request, path, data, callback)
     tostring(self._url / path)
   }
 
-  for key, value in pairs(vim.tbl_extend("error", self._auth, data or {})) do
+  for key, value in pairs(vim.tbl_extend("error", self._auth, data)) do
     table.insert(args, 1, ("%s=%s"):format(key, value))
     table.insert(args, 1, "--data-urlencode")
   end
@@ -55,11 +55,11 @@ function curl:_spawn(request, path, data, callback)
 end
 
 function curl:post(path, data)
-  return async.wrap(curl._spawn, self, "POST", path, data)
+  return async.wrap(curl._spawn, self, "POST", path, data or {})
 end
 
 function curl:put(path, data)
-  return async.wrap(curl._spawn, self, "PUT", path, data)
+  return async.wrap(curl._spawn, self, "PUT", path, data or {})
 end
 
 function curl:get(path)

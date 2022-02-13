@@ -23,14 +23,14 @@ function deepl:languages()
   return self._api:post("languages")
 end
 
-function deepl:translate(text, source, target, opts)
+function deepl:translate(text, source, target)
   local translation = self._api:post("translate", {
     text = text,
     source_lang = source or self.default.source,
     target_lang = target or self.default.target,
-    formality = opts.formality or deepl.default.formality,
-    split_sentences = opts.split_sentences or deepl.default.split_sentences,
-    preserve_formatting = opts.preserve_formatting or deepl.default.preserve_formatting,
+    formality = deepl.default.formality,
+    split_sentences = deepl.default.split_sentences,
+    preserve_formatting = deepl.default.preserve_formatting,
   })
 
   return translation.translations[1].text
