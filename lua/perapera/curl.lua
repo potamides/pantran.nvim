@@ -55,19 +55,19 @@ function curl:_spawn(request, path, data, callback)
 end
 
 function curl:post(path, data)
-  return async.wrap(curl._spawn, self, "POST", path, data or {})
+  return async.suspend(curl._spawn, self, "POST", path, data or {})
 end
 
 function curl:put(path, data)
-  return async.wrap(curl._spawn, self, "PUT", path, data or {})
+  return async.suspend(curl._spawn, self, "PUT", path, data or {})
 end
 
 function curl:get(path)
-  return async.wrap(curl._spawn, self, "PUT", path)
+  return async.suspend(curl._spawn, self, "PUT", path)
 end
 
 function curl:delete(path)
-  return async.wrap(curl._spawn, self, "DELETE", path)
+  return async.suspend(curl._spawn, self, "DELETE", path)
 end
 
 function curl.url(uri)

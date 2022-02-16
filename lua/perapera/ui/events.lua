@@ -1,35 +1,41 @@
 local utils = require("perapera.utils")
 local async = require("perapera.async")
+local actions = require("perapera.ui.actions")
 
 local events = {
-  timeout = 500,
+  timeout = 500
 }
 
-function events:on_cursor_hold()
-  self.timer:start(self.timeout, 0, async.closure(function()
-    local text, source, target = self.window:get_input(), self.window.source, self.window.target
-    if #text > 0 and text ~= self.previous_text then
-      local translation = self.window.engine:translate(text, source, target)
-      self.window:set_translation(translation)
-      self.previous_text = text
+local function timeout_translate(self, window)
+  self.timer:start(events.timeout, 0, async.wrap(function()
+    local input = window:get_input()
+    if input ~= self.previous_input then
+      actions.translate(window)
+      self.previous_input = input
     end
   end))
 end
 
-function events.new(window)
+events.events = {
+  CursorMoved = timeout_translate,
+  CursorMovedI = timeout_translate,
+}
 
-  local self = setmetatable({
-      window = window,
-      timer = vim.loop.new_timer(),
-    }, {__index = events})
+function events.setup(window)
+  local self = {
+    timer = vim.loop.new_timer(),
+    previous_input = window:get_input()
+  }
+  -- BufEnter
+  actions.translate(window)
 
-  utils.buf_autocmd(window.input.bufnr, {
-    events = {"CursorMoved", "CursorMovedI"},
-    nested = true,
-    callback = function() self:on_cursor_hold() end
-  })
-
-  return self
+  for event, handler in pairs(events.events) do
+    utils.buf_autocmd(window.input.bufnr, {
+      events = event,
+      nested = true,
+      callback = function() handler(self, window) end
+    })
+  end
 end
 
 return events

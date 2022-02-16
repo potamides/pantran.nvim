@@ -1,5 +1,6 @@
 local utils = require("perapera.utils")
 local events = require("perapera.ui.events")
+local mappings = require("perapera.ui.mappings")
 
 local window = {
   width_percentage = 0.6,
@@ -94,20 +95,20 @@ function window:set_translation(text)
   window.set_text(self.translation.bufnr, text)
 end
 
-function window:on_buf_leave()
+function window:close()
   for _, win in pairs{self.input, self.status, self.translation} do
-    vim.api.nvim_buf_delete(win.bufnr, {})
+    if vim.api.nvim_buf_is_valid(win.bufnr) then
+      vim.api.nvim_buf_delete(win.bufnr, {})
+    end
   end
 end
 
-function window:on_win_resize()
+function window:resize()
   local configs = window.gen_win_configs()
 
   for win, config in pairs(configs) do
     if vim.api.nvim_win_is_valid(self[win].win_id) then
         vim.api.nvim_win_set_config(self[win].win_id, config)
-    else
-      return
     end
   end
 end
@@ -139,20 +140,20 @@ function window.new(engine, source, target)
       input = window.create_window(true, configs.input, window.options)
     }, {__index = window})
 
-  events.new(self)
-  --mappings.new(self)
+  events.setup(self)
+  mappings.setup(self)
 
   utils.buf_autocmd(self.input.bufnr, {
     events = "BufLeave",
     once = true,
     nested = true,
-    callback = function() self:on_buf_leave() end
+    callback = function() self:close() end
   })
 
   utils.buf_autocmd(self.input.bufnr, {
     events = "VimResized",
     nested = true,
-    callback = function() self:on_win_resize() end
+    callback = function() self:resize() end
   })
 
   return self
