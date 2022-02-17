@@ -6,12 +6,12 @@ local events = {
   timeout = 500
 }
 
-local function timeout_translate(self, window)
-  self.timer:start(events.timeout, 0, async.wrap(function()
+local function timeout_translate(window, state)
+  state.timer:start(events.timeout, 0, async.wrap(function()
     local input = window:get_input()
-    if input ~= self.previous_input then
+    if input ~= state.previous_input then
       actions.translate(window)
-      self.previous_input = input
+      state.previous_input = input
     end
   end))
 end
@@ -22,7 +22,7 @@ events.events = {
 }
 
 function events.setup(window)
-  local self = {
+  local state = {
     timer = vim.loop.new_timer(),
     previous_input = window:get_input()
   }
@@ -33,7 +33,7 @@ function events.setup(window)
     utils.buf_autocmd(window.input.bufnr, {
       events = event,
       nested = true,
-      callback = function() handler(self, window) end
+      callback = function() handler(window, state) end
     })
   end
 end
