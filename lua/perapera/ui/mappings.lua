@@ -5,6 +5,7 @@ local mappings = {}
 
 mappings.mappings = {
   i = {
+    ["<C-c>"] = actions.close,
     ["<C-_>"] = actions.help, -- keys from pressing <C-/>
     ["<C-y>"] = actions.yank_close_translation,
     ["<M-y>"] = actions.yank_close_input,
@@ -19,6 +20,7 @@ mappings.mappings = {
     ["<M-t>"] = actions.translate
   },
   n = {
+    ["<Esc>"] = actions.close,
     ["g?"] = actions.help,
     ["gy"] = actions.yank_close_translation,
     ["gY"] = actions.yank_close_input,
