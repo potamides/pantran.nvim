@@ -143,19 +143,6 @@ function window.new(engine, source, target)
   events.setup(self)
   mappings.setup(self)
 
-  utils.buf_autocmd(self.input.bufnr, {
-    events = "BufLeave",
-    once = true,
-    nested = true,
-    callback = function() self:close() end
-  })
-
-  utils.buf_autocmd(self.input.bufnr, {
-    events = "VimResized",
-    nested = true,
-    callback = function() self:resize() end
-  })
-
   return self
 end
 

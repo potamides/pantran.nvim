@@ -72,6 +72,10 @@ function actions.close(window)
   window:close()
 end
 
+function actions.resize(window)
+  window:resize()
+end
+
 actions.switch_languages = async.wrap(function(window)
   local translation, source, target = window:get_translation(), window.source, window.target
 

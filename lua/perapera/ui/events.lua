@@ -19,6 +19,8 @@ end
 events.events = {
   CursorMoved = timeout_translate,
   CursorMovedI = timeout_translate,
+  VimResized = actions.resize,
+  BufLeave = {actions.close, once = true}
 }
 
 function events.setup(window)
@@ -30,11 +32,16 @@ function events.setup(window)
   actions.translate(window)
 
   for event, handler in pairs(events.events) do
-    utils.buf_autocmd(window.input.bufnr, {
+    local action, args = handler, {}
+    if type(handler) == "table" then
+      action = table.remove(handler)
+      args = handler
+    end
+    utils.buf_autocmd(window.input.bufnr, vim.tbl_extend("keep", args, {
       events = event,
       nested = true,
-      callback = function() handler(window, state) end
-    })
+      callback = function() action(window, state) end
+    }))
   end
 end
 
