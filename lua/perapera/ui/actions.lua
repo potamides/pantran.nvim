@@ -13,7 +13,7 @@ local function yank_close(window, buffer)
 end
 
 local function replace_close(window, buffer)
-  local text = window.get_text(window[buffer].bufnr)
+  local text = window.get_text(buffer.bufnr)
   window:close()
   if window.coords then
     error("Not implemented!") -- TODO
@@ -23,7 +23,7 @@ local function replace_close(window, buffer)
 end
 
 local function append_close(window, buffer)
-  local text = window.get_text(window[buffer].bufnr)
+  local text = window.get_text(buffer.bufnr)
   window:close()
   if window.coords then
     error("Not implemented!") -- TODO
