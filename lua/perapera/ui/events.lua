@@ -33,6 +33,7 @@ function events.setup(window)
   for event, handler in pairs(events.events) do
     local action, args = handler, {}
     if type(handler) == "table" then
+      handler = vim.deepcopy(handler)
       action = table.remove(handler)
       args = handler
     end

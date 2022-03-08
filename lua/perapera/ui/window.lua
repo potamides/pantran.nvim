@@ -63,11 +63,14 @@ function window.gen_win_configs()
 end
 
 function window.get_text(bufnr)
-  return table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, true), "\n")
+  return vim.api.nvim_buf_is_valid(bufnr) and table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, true), "\n") or ""
 end
 
 function window.set_text(bufnr, text)
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(text, "\n", {plain = true}))
+  -- check if window was closed already
+  if vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(text, "\n", {plain = true}))
+  end
 end
 
 function window:get_input()
