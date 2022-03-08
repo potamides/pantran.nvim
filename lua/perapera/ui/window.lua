@@ -1,4 +1,3 @@
-local utils = require("perapera.utils")
 local events = require("perapera.ui.events")
 local mappings = require("perapera.ui.mappings")
 
@@ -12,7 +11,7 @@ local window = {
     relative = "editor",
     border = "single"
   },
-  -- TODO: make ftplugin for this
+  -- TODO: maybe make ftplugin for this
   options = {
     number = false,
     relativenumber = false,
@@ -133,8 +132,8 @@ function window.new(engine, source, target)
 
   local self = setmetatable({
       engine = engine,
-      source = source,
-      target = target,
+      source = source or engine.default.source,
+      target = target or engine.default.target,
       status = window.create_window(false, configs.status, window.options),
       translation = window.create_window(false, configs.translation, window.options),
       input = window.create_window(true, configs.input, window.options)

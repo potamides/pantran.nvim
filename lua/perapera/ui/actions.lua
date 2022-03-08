@@ -76,12 +76,23 @@ function actions.resize(window)
   window:resize()
 end
 
-actions.switch_languages = async.wrap(function(window)
-  local translation, source, target = window:get_translation(), window.source, window.target
+actions.switch_languages = async.wrap(function(window, state)
+  local source, target = window.source, window.target
+  if state.previous and state.previous[source] and state.previous[target] then
+    window.source, window.target = state.previous[source], state.previous[target]
+  else
+    window.source, window.target = window.engine:switch(source, target)
+  end
 
-  window:set_input(translation)
-  window:set_translation(#translation > 0 and window.engine:translate(translation, target, source) or "")
-  window.target, window.source = source, target -- TODO: fix
+  if window.source ~= source and window.target ~= target then
+    window:set_input(window:get_translation())
+    actions.translate(window)
+  end
+
+  state.previous = {
+    [window.source] = source,
+    [window.target] = target
+  }
 end)
 
 actions.translate = async.wrap(function(window)

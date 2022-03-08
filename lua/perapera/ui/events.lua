@@ -1,13 +1,12 @@
 local utils = require("perapera.utils")
-local async = require("perapera.async")
 local actions = require("perapera.ui.actions")
 
 local events = {
-  timeout = 500
+  timeout = 300
 }
 
 local function timeout_translate(window, state)
-  state.timer:start(events.timeout, 0, async.wrap(function()
+  state.timer:start(events.timeout, 0, vim.schedule_wrap(function()
     local input = window:get_input()
     if input ~= state.previous_input then
       actions.translate(window)

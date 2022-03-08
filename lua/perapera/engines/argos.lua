@@ -5,7 +5,7 @@ local argos = {
   default = {
     args = {
       url = "https://translate.argosopentech.com",
-      auth = {api_key = nil} -- optional for many libretranslate instances
+      auth = {api_key = vim.NIL} -- optional for many libretranslate instances
     },
     source = "auto",
     target = "en"
@@ -17,7 +17,30 @@ function argos:detect(text)
 end
 
 function argos:languages()
-  return self._api:get("languages")
+  if not self._languages then
+    local languages = {
+      source = {
+        auto = "Detect language"
+      },
+      target = {}
+    }
+
+    for _, lang in pairs(self._api:get("languages")) do
+      languages.source[lang.code] = lang.name
+      languages.target[lang.code] = lang.name
+    end
+    self._languages = languages
+  end
+
+  return self._languages
+end
+
+function argos:switch(source, target)
+  if source == "auto" then
+    return source, target
+  else
+    return target, source
+  end
 end
 
 function argos:translate(text, source, target)

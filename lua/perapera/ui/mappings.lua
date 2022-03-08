@@ -37,10 +37,10 @@ mappings.mappings = {
 }
 
 function mappings.setup(window)
-  local buf, opts = window.input.bufnr, {noremap = true, silent = true}
+  local buf, opts, state = window.input.bufnr, {noremap = true, silent = true}, {}
   for mode, maps in pairs(mappings.mappings) do
     for lhs, rhs in pairs(maps) do
-      utils.buf_keymap(buf, {mode = mode, lhs = lhs, rhs = function() rhs(window) end, opts = opts})
+      utils.buf_keymap(buf, {mode = mode, lhs = lhs, rhs = function() rhs(window, state) end, opts = opts})
     end
   end
 
