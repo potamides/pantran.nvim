@@ -63,11 +63,11 @@ function curl:put(path, data)
 end
 
 function curl:get(path)
-  return async.suspend(curl._spawn, self, "PUT", path)
+  return async.suspend(curl._spawn, self, "GET", path, {})
 end
 
 function curl:delete(path)
-  return async.suspend(curl._spawn, self, "DELETE", path)
+  return async.suspend(curl._spawn, self, "DELETE", path, {})
 end
 
 function curl.url(uri)
