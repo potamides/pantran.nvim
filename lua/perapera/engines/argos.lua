@@ -20,7 +20,7 @@ function argos:languages()
   if not self._languages then
     local languages = {
       source = {
-        auto = "Detect language"
+        auto = "Auto"
       },
       target = {}
     }

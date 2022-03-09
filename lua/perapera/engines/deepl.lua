@@ -23,7 +23,7 @@ function deepl:languages()
   if not self._languages then
     local languages = {
       source = {
-        [vim.NIL] = "Detect language"
+        [vim.NIL] = "Auto"
       },
       target = {}
     }
@@ -66,7 +66,10 @@ function deepl:translate(text, source, target)
   })
 
   -- TODO: return table with detected language
-  return translation.translations[1].text
+  return ({
+    text = translation.translations[1].text,
+    detected = translation.translations[1].detected_source_language
+  }).text
 end
 
 -- TODO: change to setup
