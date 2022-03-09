@@ -1,5 +1,6 @@
 local events = require("perapera.ui.events")
 local mappings = require("perapera.ui.mappings")
+local async = require("perapera.async")
 
 local window = {
   width_percentage = 0.6,
@@ -26,7 +27,7 @@ local window = {
   }
 }
 
-function window.gen_win_configs()
+function window._gen_win_configs()
   local height = math.ceil(vim.o.lines * window.height_percentage)
   local width = math.floor(vim.o.columns * window.width_percentage)
   height, width = math.max(window.min_height, height), math.max(window.min_width, width)
@@ -73,32 +74,8 @@ function window.set_text(bufnr, text)
   end
 end
 
-function window:get_input()
-  return window.get_text(self.input.bufnr)
-end
-
-function window:set_input(text)
-  window.set_text(self.input.bufnr, text)
-end
-
-function window:get_status()
-  return window.get_text(self.status.bufnr)
-end
-
-function window:set_status(text)
-  window.set_text(self.status.bufnr, text)
-end
-
-function window:get_translation()
-  return window.get_text(self.translation.bufnr)
-end
-
-function window:set_translation(text)
-  window.set_text(self.translation.bufnr, text)
-end
-
 function window:close()
-  for _, win in pairs{self.input, self.status, self.translation} do
+  for _, win in pairs(self._win) do
     if vim.api.nvim_buf_is_valid(win.bufnr) then
       vim.api.nvim_buf_delete(win.bufnr, {})
     end
@@ -106,7 +83,7 @@ function window:close()
 end
 
 function window:resize()
-  local configs = window.gen_win_configs()
+  local configs = window._gen_win_configs()
 
   for win, config in pairs(configs) do
     if vim.api.nvim_win_is_valid(self[win].win_id) then
@@ -115,7 +92,15 @@ function window:resize()
   end
 end
 
-function window.create_window(enter, config, options)
+-- TODO: add detect
+function window:update()
+  async.run(function()
+    local source, target = self._engine:languages().source[self._source], self._engine:languages().target[self._target]
+    window.set_text(self._win.status.bufnr, ("%s: %s -> %s"):format(self._engine.name, source, target))
+  end)
+end
+
+function window._create_window(enter, config, options)
   local bufnr = vim.api.nvim_create_buf(false, true)
   local win_id = vim.api.nvim_open_win(bufnr, enter, config or {})
   vim.api.nvim_win_set_buf(win_id, bufnr)
@@ -132,20 +117,40 @@ function window.create_window(enter, config, options)
   }
 end
 
-function window.new(engine, source, target)
-  local configs = window.gen_win_configs()
+function window:_get_prop(_, key)
+  return self["_" .. key] or self.get_text(self._win[key].bufnr)
+end
 
-  local self = setmetatable({
-      engine = engine,
-      source = source or engine.default.source,
-      target = target or engine.default.target,
-      status = window.create_window(false, configs.status, window.options),
-      translation = window.create_window(false, configs.translation, window.options),
-      input = window.create_window(true, configs.input, window.options)
+function window:_set_prop(_, key, value)
+  if self._win[key] then
+    window.set_text(self._win[key].bufnr, value)
+  else
+    self["_" .. key] = value
+    self:update()
+  end
+end
+
+function window.new(engine, source, target)
+  local configs, self = window._gen_win_configs()
+
+  self = setmetatable({
+      _engine = engine,
+      _source = source or engine.default.source,
+      _target = target or engine.default.target,
+      _win = {
+        status = window._create_window(false, configs.status, window.options),
+        translation = window._create_window(false, configs.translation, window.options),
+        input = window._create_window(true, configs.input, window.options),
+      },
+      prop = setmetatable({}, {
+        __newindex = function(...) self:_set_prop(...) end,
+        __index = function(...) return self:_get_prop(...) end
+      })
     }, {__index = window})
 
-  events.setup(self)
-  mappings.setup(self)
+  events.setup(self, self._win.input.bufnr)
+  mappings.setup(self, self._win.input.bufnr)
+  self:update()
 
   return self
 end

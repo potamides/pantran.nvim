@@ -7,7 +7,7 @@ local events = {
 
 local function timeout_translate(window, state)
   state.timer:start(events.timeout, 0, vim.schedule_wrap(function()
-    local input = window:get_input()
+    local input = window.prop.input
     if input ~= state.previous_input then
       actions.translate(window)
       state.previous_input = input
@@ -22,10 +22,10 @@ events.events = {
   BufLeave = {actions.close, once = true}
 }
 
-function events.setup(window)
+function events.setup(window, bufnr)
   local state = {
     timer = vim.loop.new_timer(),
-    previous_input = window:get_input()
+    previous_input = window.prop.input
   }
   -- BufEnter
   actions.translate(window)
@@ -37,7 +37,7 @@ function events.setup(window)
       action = table.remove(handler)
       args = handler
     end
-    utils.buf_autocmd(window.input.bufnr, vim.tbl_extend("keep", args, {
+    utils.buf_autocmd(bufnr, vim.tbl_extend("keep", args, {
       events = event,
       nested = true,
       callback = function() action(window, state) end
