@@ -11,7 +11,6 @@ local window = {
     relative = "editor",
     border = "single"
   },
-  -- TODO: maybe make ftplugin for this
   options = {
     number = false,
     relativenumber = false,
@@ -21,8 +20,9 @@ local window = {
     signcolumn = "auto",
     colorcolumn = "",
     fillchars = "eob: ",
-    winhighlight = "Normal:Normal,FloatBorder:Normal"
-    --textwidth = 0 # TODO
+    winhighlight = "Normal:Normal,FloatBorder:Normal",
+    textwidth = 0
+    -- TODO: spell off only in status window
   }
 }
 
@@ -121,7 +121,9 @@ function window.create_window(enter, config, options)
   vim.api.nvim_win_set_buf(win_id, bufnr)
 
   for option, value in pairs(options or {}) do
-    vim.api.nvim_win_set_option(win_id, option, value)
+    -- FIXME: This is rather crude and could be solved with ftplugins
+    pcall(vim.api.nvim_win_set_option, win_id, option, value)
+    pcall(vim.api.nvim_buf_set_option, bufnr, option, value)
   end
 
   return {
