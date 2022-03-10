@@ -43,7 +43,6 @@ function mappings.setup(window, bufnr)
       utils.buf_keymap(bufnr, {mode = mode, lhs = lhs, rhs = function() rhs(window, state) end, opts = opts})
     end
   end
-
 end
 
 return mappings
