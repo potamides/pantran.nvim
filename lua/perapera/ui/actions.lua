@@ -1,4 +1,5 @@
 local async = require("perapera.async")
+local engines = require("perapera.engines")
 local actions = {}
 
 function actions.help()
@@ -53,18 +54,6 @@ function actions.append_close_input(window)
   append_close(window, window.prop.input)
 end
 
-function actions.set_engine()
-  error("Not implemented!") -- TODO
-end
-
-function actions.set_source()
-  error("Not implemented!") -- TODO
-end
-
-function actions.set_target()
-  error("Not implemented!") -- TODO
-end
-
 function actions.close(window)
   window:close()
 end
@@ -72,6 +61,39 @@ end
 function actions.resize(window)
   window:resize()
 end
+
+local function on_lang(window, prop)
+  return function(lang)
+    if lang then
+      window.prop[prop] = lang
+      actions.translate(window)
+    end
+  end
+end
+
+-- TODO: implement a more integrated picker for these kind of functions
+actions.set_source = async.wrap(function(window)
+  local langs  = window.prop.engine.languages().source
+  vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "source"))
+end)
+
+actions.set_target = async.wrap(function(window)
+  local langs  = window.prop.engine.languages().target
+  vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "target"))
+end)
+
+actions.set_engine = async.wrap(function(window)
+  local function on_choice(name)
+    if name then
+      local engine = engines[name]
+      window.prop.engine = engine
+      window.prop.source = engine.config.default_source
+      window.prop.target = engine.config.default_target
+      actions.translate(window)
+    end
+  end
+  vim.ui.select(vim.tbl_keys(engines), nil, on_choice)
+end)
 
 actions.switch_languages = async.wrap(function(window, state)
   local p = window.prop
