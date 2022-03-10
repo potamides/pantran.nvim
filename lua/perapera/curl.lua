@@ -4,12 +4,14 @@ local config = require("perapera.config")
 local curl = {
   config = {
     curl_cmd = "curl",
+    retry = 3
   }
 }
 
 function curl:_spawn(request, path, data, callback)
   local cmd, stdout, response, handle = self.config.curl_cmd, vim.loop.new_pipe(), ""
   local args = {
+    "--retry", self.config.retry,
     "--request", request,
     "--header", "accept: application/json",
     tostring(self._url / path)
