@@ -1,16 +1,14 @@
 local async = require("perapera.async")
+local config = require("perapera.config")
 
 local curl = {
-  default = {
-    args = {
-      cmd = "curl",
-      auth = {}
-    }
+  config = {
+    curl_cmd = "curl",
   }
 }
 
 function curl:_spawn(request, path, data, callback)
-  local stdout, response, handle = vim.loop.new_pipe(), ""
+  local cmd, stdout, response, handle = self.config.curl_cmd, vim.loop.new_pipe(), ""
   local args = {
     "--request", request,
     "--header", "accept: application/json",
@@ -22,13 +20,13 @@ function curl:_spawn(request, path, data, callback)
     table.insert(args, 1, "--data-urlencode")
   end
 
-  handle = vim.loop.spawn(self._cmd, {
+  handle = vim.loop.spawn(cmd, {
       args = args,
       stdio = {nil, stdout, nil}
     },
     vim.schedule_wrap(function(code) -- on exit
       if code ~= 0 then
-        vim.notify(("%q exited with error code %d!"):format(self._cmd, code), vim.log.levels.ERROR)
+        vim.notify(("%q exited with error code %d!"):format(cmd, code), vim.log.levels.ERROR)
       elseif callback then
         local ok, decoded = pcall(vim.fn.json_decode, response)
         if ok then
@@ -50,7 +48,7 @@ function curl:_spawn(request, path, data, callback)
       end
     end))
   else
-    vim.notify(("Something went wrong. Make sure that %q is installed."):format(self._cmd), vim.log.levels.ERROR)
+    vim.notify(("Something went wrong. Make sure that %q is installed."):format(cmd), vim.log.levels.ERROR)
   end
 end
 
@@ -86,14 +84,12 @@ function curl.url(uri)
 end
 
 function curl.new(args)
-  args = vim.tbl_deep_extend("force", curl.default.args, args or {})
   local self = {
     _url = curl.url(args.url),
-    _auth = args.auth,
-    _cmd = args.cmd
+    _auth = args.auth or {},
   }
 
   return setmetatable(self, {__index = curl})
 end
 
-return curl
+return config.apply(config.user.curl, curl)

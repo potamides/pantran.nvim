@@ -2,5 +2,6 @@
 
 ## TODO
 - [ ] Documentation
-- [ ] Figure good way to configuration
+- [x] Figure out good way to configuration
 - [ ] maybe tests
+- [ ] ensure order of network calls

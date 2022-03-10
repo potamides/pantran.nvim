@@ -1,4 +1,5 @@
-local perapera = require("perapera")
+local async = require("perapera.async")
+local engines = require("perapera.engines")
 local window = require("perapera.ui.window")
 
 local command = {
@@ -37,14 +38,14 @@ function command.translate(srow, erow, opts)
   --  end
   --end)
 
-  perapera.async.run(function()
-    local engine = perapera.engines[opts.engine or "default"]
+  async.run(function()
+    local engine = engines[opts.engine or "default"]
     window.new(engine)
   end)
 end
 
 function command.languages(opts)
-  perapera.async.run(function()
+  async.run(function()
     print(opts)
   end)
 end

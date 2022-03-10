@@ -80,7 +80,7 @@ actions.switch_languages = async.wrap(function(window, state)
   if state.previous and state.previous[p.source] and state.previous[p.target] then
     p.source, p.target = state.previous[p.source], state.previous[p.target]
   else
-    p.source, p.target = p.engine:switch(detected or source, target)
+    p.source, p.target = p.engine.switch(detected or source, target)
   end
 
   if p.source ~= source and p.target ~= target then
@@ -96,7 +96,7 @@ end)
 
 actions.translate = async.wrap(function(window)
   local input, source, target = window.prop.input, window.prop.source, window.prop.target
-  local translation = #input > 0 and window.prop.engine:translate(input, source, target) or {}
+  local translation = #input > 0 and window.prop.engine.translate(input, source, target) or {}
   window.prop.translation = translation.text or ""
   window.prop.detected = translation.detected
 end)

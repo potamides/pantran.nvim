@@ -45,4 +45,14 @@ function utils.buf_keymap(buffer, args)
   vim.api.nvim_buf_set_keymap(buffer, args.mode, args.lhs, rhs, args.opts)
 end
 
+function utils.pop(tbl, key)
+  if type(key) == "number" then
+    return table.remove(tbl, key)
+  else
+    local value = tbl[key]
+    tbl[key] = nil
+    return value
+  end
+end
+
 return utils

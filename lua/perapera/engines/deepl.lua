@@ -1,26 +1,25 @@
 local curl = require("perapera.curl")
+local config = require("perapera.config")
 
 local deepl = {
   name = "DeepL",
-  default = {
-    args = {
-      url = "https://api-free.deepl.com/v2",
-      auth = {auth_key = vim.env.DEEPL_AUTH_KEY}
-    },
-    source = vim.NIL, -- API will attempt to detect the language automatically
-    target = "EN-US",
+  config = {
+    url = "https://api-free.deepl.com/v2",
+    auth = {auth_key = vim.env.DEEPL_AUTH_KEY},
+    default_source = vim.NIL, -- API will attempt to detect the language automatically
+    default_target = "EN-US",
     split_sentences = 1,
     preserve_formatting = 0,
     formality = "default"
   }
 }
 
-function deepl:usage()
-  return self._api:post("usage")
+function deepl.usage()
+  return deepl._api:post("usage")
 end
 
-function deepl:languages()
-  if not self._languages then
+function deepl.languages()
+  if not deepl._languages then
     local languages = {
       source = {
         [vim.NIL] = "Auto"
@@ -29,18 +28,18 @@ function deepl:languages()
     }
 
     for type_, tbl in pairs(languages) do
-      for _, lang in pairs(self._api:post("languages", {["type"] = type_})) do
+      for _, lang in pairs(deepl._api:post("languages", {["type"] = type_})) do
         tbl[lang.language] = lang.name
       end
     end
-    self._languages = languages
+    deepl._languages = languages
   end
 
-  return self._languages
+  return deepl._languages
 end
 
-function deepl:switch(source, target)
-  local langs = self:languages()
+function deepl.switch(source, target)
+  local langs = deepl.languages()
   local new_source = vim.split(target, "-", {plain = true})[1]
 
   local matches = vim.tbl_filter(function(lang) return vim.startswith(lang, tostring(source)) end, vim.tbl_keys(langs.target))
@@ -53,36 +52,29 @@ function deepl:switch(source, target)
   return new_source, new_target
 end
 
-function deepl:translate(text, source, target)
-  source, target = source or self.default.source, target or self.default.target
+function deepl.translate(text, source, target)
+  source, target = source or deepl.config.default_source, target or deepl.config.default_target
 
-  local translation = self._api:post("translate", {
+  local translation = deepl._api:post("translate", {
     text = text,
     source_lang = source ~= vim.NIL and source or nil,
     target_lang = target,
-    formality = deepl.default.formality,
-    split_sentences = deepl.default.split_sentences,
-    preserve_formatting = deepl.default.preserve_formatting,
+    formality = deepl.config.formality,
+    split_sentences = deepl.config.split_sentences,
+    preserve_formatting = deepl.config.preserve_formatting,
   })
 
-  -- TODO: return table with detected language
   return {
     text = translation.translations[1].text,
     detected = source == vim.NIL and translation.translations[1].detected_source_language or nil
   }
 end
 
--- TODO: change to setup
-function deepl.new(args)
-  args = vim.tbl_deep_extend("force", deepl.default.args, args or {})
-  local self = {
-    _api = curl.new{
-      url = args.url,
-      auth = args.auth
-    }
+function deepl.setup()
+  deepl._api = curl.new{
+    url = deepl.config.url,
+    auth = deepl.config.auth
   }
-
-  return setmetatable(self, {__index = deepl})
 end
 
-return deepl
+return config.apply(config.user.engines.deepl, deepl)
