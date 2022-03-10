@@ -84,6 +84,7 @@ actions.switch_languages = async.wrap(function(window, state)
   end
 
   if p.source ~= source and p.target ~= target then
+    p.detected = nil
     p.input = p.translation
     actions.translate(window)
   end
