@@ -95,8 +95,15 @@ end
 -- TODO: add detect
 function window:update()
   async.run(function()
-    local source, target = self._engine:languages().source[self._source], self._engine:languages().target[self._target]
-    window.set_text(self._win.status.bufnr, ("%s: %s -> %s"):format(self._engine.name, source, target))
+    local langs = self._engine:languages()
+    local source, target = langs.source[self._source], langs.target[self._target]
+    local detected = self._detected and langs.source[self._detected]
+
+    if detected then
+      window.set_text(self._win.status.bufnr, ("%s: %s (%s) -> %s"):format(self._engine.name, source, detected, target))
+    else
+      window.set_text(self._win.status.bufnr, ("%s: %s -> %s"):format(self._engine.name, source, target))
+    end
   end)
 end
 
@@ -118,7 +125,7 @@ function window._create_window(enter, config, options)
 end
 
 function window:_get_prop(_, key)
-  return self["_" .. key] or self.get_text(self._win[key].bufnr)
+  return self["_" .. key] or (self._win[key] and self.get_text(self._win[key].bufnr) or nil)
 end
 
 function window:_set_prop(_, key, value)

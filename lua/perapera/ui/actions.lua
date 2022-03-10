@@ -74,27 +74,31 @@ function actions.resize(window)
 end
 
 actions.switch_languages = async.wrap(function(window, state)
-  local source, target = window.prop.source, window.prop.target
-  if state.previous and state.previous[source] and state.previous[target] then
-    window.prop.source, window.prop.target = state.previous[source], state.previous[target]
+  local p = window.prop
+  local source, target, detected = p.source, p.target, p.detected
+
+  if state.previous and state.previous[p.source] and state.previous[p.target] then
+    p.source, p.target = state.previous[p.source], state.previous[p.target]
   else
-    window.prop.source, window.prop.target = window.prop.engine:switch(source, target)
+    p.source, p.target = p.engine:switch(detected or source, target)
   end
 
-  if window.prop.source ~= source and window.prop.target ~= target then
-    window.prop.input = window.prop.translation
+  if p.source ~= source and p.target ~= target then
+    p.input = p.translation
     actions.translate(window)
   end
 
   state.previous = {
-    [window.prop.source] = source,
-    [window.prop.target] = target
+    [p.source] = source,
+    [p.target] = target,
   }
 end)
 
 actions.translate = async.wrap(function(window)
   local input, source, target = window.prop.input, window.prop.source, window.prop.target
-  window.prop.translation = #input > 0 and window.prop.engine:translate(input, source, target) or ""
+  local translation = #input > 0 and window.prop.engine:translate(input, source, target) or {}
+  window.prop.translation = translation.text or ""
+  window.prop.detected = translation.detected
 end)
 
 return actions

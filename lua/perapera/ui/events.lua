@@ -7,10 +7,9 @@ local events = {
 
 local function timeout_translate(window, state)
   state.timer:start(events.timeout, 0, vim.schedule_wrap(function()
-    local input = window.prop.input
-    if input ~= state.previous_input then
+    if window.prop.input ~= state.previous_input then
+      state.previous_input = window.prop.input
       actions.translate(window)
-      state.previous_input = input
     end
   end))
 end

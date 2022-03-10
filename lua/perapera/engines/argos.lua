@@ -13,7 +13,7 @@ local argos = {
 }
 
 function argos:detect(text)
-  return self._api:post("detect", {q = text})
+  return self._api:post("detect", {q = text})[1].language
 end
 
 function argos:languages()
@@ -50,7 +50,10 @@ function argos:translate(text, source, target)
     target = target or self.default.target
   })
 
-  return translation.translatedText
+  return {
+    text = translation.translatedText,
+    detected = source == "auto" and self:detect(text) or nil
+  }
 end
 
 function argos.new(args)

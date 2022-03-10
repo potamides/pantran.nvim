@@ -8,7 +8,7 @@ local deepl = {
       auth = {auth_key = vim.env.DEEPL_AUTH_KEY}
     },
     source = vim.NIL, -- API will attempt to detect the language automatically
-    target = "EN",
+    target = "EN-US",
     split_sentences = 1,
     preserve_formatting = 0,
     formality = "default"
@@ -66,10 +66,10 @@ function deepl:translate(text, source, target)
   })
 
   -- TODO: return table with detected language
-  return ({
+  return {
     text = translation.translations[1].text,
-    detected = translation.translations[1].detected_source_language
-  }).text
+    detected = source == vim.NIL and translation.translations[1].detected_source_language or nil
+  }
 end
 
 -- TODO: change to setup
