@@ -88,9 +88,9 @@ end
 function window:resize()
   local configs = window._gen_win_configs()
 
-  for win, config in pairs(configs) do
-    if vim.api.nvim_win_is_valid(self[win].win_id) then
-        vim.api.nvim_win_set_config(self[win].win_id, config)
+  for win, conf in pairs(configs) do
+    if vim.api.nvim_win_is_valid(self._win[win].win_id) then
+        vim.api.nvim_win_set_config(self._win[win].win_id, conf)
     end
   end
 end
