@@ -23,6 +23,5 @@ getmetatable(engines).__index.default = engines[engines.config.default_engine]
 for _, engine in pairs(engines) do
   engine.setup()
 end
---print(vim.inspect(engines))
 
 return engines
