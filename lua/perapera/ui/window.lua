@@ -106,11 +106,15 @@ function window:_set_virtual(bufnr, args)
     end
   end
 
-  return vim.api.nvim_buf_set_extmark(bufnr, self._namespace, 0, 0, {
-    id = args.id,
-    virt_text_pos = args.right_align and "right_align" or "overlay",
-    virt_text = virt_text
-  })
+  if vim.api.nvim_buf_is_valid(bufnr) then
+    return vim.api.nvim_buf_set_extmark(bufnr, self._namespace, 0, 0, {
+      id = args.id,
+      virt_text_pos = args.right_align and "right_align" or "overlay",
+      virt_text = virt_text
+    })
+  else
+    return args.id
+  end
 end
 
 function window:close()
