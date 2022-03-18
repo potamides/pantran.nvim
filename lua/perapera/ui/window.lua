@@ -2,6 +2,7 @@ local events = require("perapera.ui.events")
 local mappings = require("perapera.ui.mappings")
 local async = require("perapera.async")
 local config = require("perapera.config")
+local utils = require("perapera.utils")
 
 local window = {
   config = {
@@ -27,6 +28,10 @@ local window = {
       textwidth = 0,
       spell=false -- FIXME: only do this in languagebar and title windows
     }
+  },
+  prop = {
+    set = {},
+    get = {}
   }
 }
 
@@ -75,18 +80,18 @@ function window._gen_win_configs(title_width)
   return configs
 end
 
-function window.get_text(bufnr)
+function window._get_text(bufnr)
   return vim.api.nvim_buf_is_valid(bufnr) and table.concat(vim.api.nvim_buf_get_lines(bufnr, 0, -1, true), "\n") or ""
 end
 
-function window.set_text(bufnr, text)
+function window._set_text(bufnr, text)
   -- check if window was closed already
   if vim.api.nvim_buf_is_valid(bufnr) then
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(text, "\n", {plain = true}))
   end
 end
 
-function window:set_virtual(bufnr, args)
+function window:_set_virtual(bufnr, args)
   local virt_text = vim.list_slice(args.virt_text or {})
   local sep = {" ", "PeraperaNormal"}
   if args.separate then
@@ -133,7 +138,7 @@ function window:update()
     {self.config.title_border[2], "PeraperaBorder"}
   }
 
-  self._title_id = self:set_virtual(self._win.title.bufnr, {
+  self._title_id = self:_set_virtual(self._win.title.bufnr, {
     id = self._title_id,
     virt_text = title
   })
@@ -142,20 +147,20 @@ function window:update()
   self:resize()
 
   -- clear source and target languages before updating asynchronously (which can take time)
-  self._left_id = self:set_virtual(self._win.languagebar.bufnr, {id = self._left_id})
-  self._right_id = self:set_virtual(self._win.languagebar.bufnr, {id = self._right_id})
+  self._left_id = self:_set_virtual(self._win.languagebar.bufnr, {id = self._left_id})
+  self._right_id = self:_set_virtual(self._win.languagebar.bufnr, {id = self._right_id})
 
   async.run(function()
     local langs = self._engine.languages()
     local source, target = langs.source[self._source], langs.target[self._target]
     local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
 
-    self._left_id = self:set_virtual(self._win.languagebar.bufnr, {
+    self._left_id = self:_set_virtual(self._win.languagebar.bufnr, {
       id = self._left_id,
       virt_text = {{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil},
       separate = true
     })
-    self._right_id = self:set_virtual(self._win.languagebar.bufnr, {
+    self._right_id = self:_set_virtual(self._win.languagebar.bufnr, {
       id = self._right_id,
       virt_text = {{target, "PeraperaLanguagebar"}},
       separate = true,
@@ -181,23 +186,64 @@ function window._create_window(enter, conf, options)
   }
 end
 
-function window:_get_prop(_, key)
-  return self["_" .. key] or (self._win[key] and self.get_text(self._win[key].bufnr) or nil)
+function window.prop.set:engine(engine)
+  self._engine = engine
+  self:update()
 end
 
-function window:_set_prop(_, key, value)
-  if self._win[key] then
-    window.set_text(self._win[key].bufnr, value)
-  else
-    self["_" .. key] = value
-    self:update()
-  end
+function window.prop.set:source(source)
+  self._source = source
+  self:update()
+end
+
+function window.prop.set:detected(detected)
+  self._detected = detected
+  self:update()
+end
+
+function window.prop.set:target(target)
+  self._target = target
+  self:update()
+end
+
+function window.prop.set:translation(translation)
+  window._set_text(self._win.translation.bufnr, translation)
+  self:update()
+end
+
+function window.prop.set:input(input)
+  window._set_text(self._win.input.bufnr, input)
+  self:update()
+end
+
+function window.prop.get:engine()
+  return self._engine
+end
+
+function window.prop.get:source()
+  return self._source
+end
+
+function window.prop.get:detected()
+  return self._detected
+end
+
+function window.prop.get:target()
+  return self._target
+end
+
+function window.prop.get:translation()
+  return self._get_text(self._win.translation.bufnr)
+end
+
+function window.prop.get:input()
+  return self._get_text(self._win.input.bufnr)
 end
 
 function window.new(engine, source, target)
   local configs, self = window._gen_win_configs()
 
-  self = setmetatable({
+  self = utils.make_properties(setmetatable({
       _engine = engine,
       _source = source or engine.config.default_source,
       _target = target or engine.config.default_target,
@@ -208,11 +254,7 @@ function window.new(engine, source, target)
         translation = window._create_window(false, configs.translation, window.config.options),
         input = window._create_window(true, configs.input, window.config.options),
       },
-      prop = setmetatable({}, {
-        __newindex = function(...) self:_set_prop(...) end,
-        __index = function(...) return self:_get_prop(...) end
-      })
-    }, {__index = window})
+    }, {__index = window}))
 
   events.setup(self, self._win.input.bufnr)
   mappings.setup(self, self._win.input.bufnr)

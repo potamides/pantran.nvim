@@ -31,27 +31,27 @@ local function append_close(window, text)
 end
 
 function actions.yank_close_translation(window)
-  yank_close(window, window.prop.translation)
+  yank_close(window, window.translation)
 end
 
 function actions.yank_close_input(window)
-  yank_close(window, window.prop.input)
+  yank_close(window, window.input)
 end
 
 function actions.replace_close_translation(window)
-  replace_close(window, window.prop.translation)
+  replace_close(window, window.translation)
 end
 
 function actions.replace_close_input(window)
-  replace_close(window, window.prop.input)
+  replace_close(window, window.input)
 end
 
 function actions.append_close_translation(window)
-  append_close(window, window.prop.translation)
+  append_close(window, window.translation)
 end
 
 function actions.append_close_input(window)
-  append_close(window, window.prop.input)
+  append_close(window, window.input)
 end
 
 function actions.close(window)
@@ -65,7 +65,7 @@ end
 local function on_lang(window, prop)
   return function(lang)
     if lang then
-      window.prop[prop] = lang
+      window[prop] = lang
       actions.translate(window)
     end
   end
@@ -73,12 +73,12 @@ end
 
 -- TODO: implement a more integrated picker for these kind of functions
 actions.set_source = async.wrap(function(window)
-  local langs  = window.prop.engine.languages().source
+  local langs  = window.engine.languages().source
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "source"))
 end)
 
 actions.set_target = async.wrap(function(window)
-  local langs  = window.prop.engine.languages().target
+  local langs  = window.engine.languages().target
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "target"))
 end)
 
@@ -86,9 +86,9 @@ actions.set_engine = async.wrap(function(window)
   local function on_choice(name)
     if name then
       local engine = engines[name]
-      window.prop.engine = engine
-      window.prop.source = engine.config.default_source
-      window.prop.target = engine.config.default_target
+      window.engine = engine
+      window.source = engine.config.default_source
+      window.target = engine.config.default_target
       actions.translate(window)
     end
   end
@@ -96,32 +96,31 @@ actions.set_engine = async.wrap(function(window)
 end)
 
 actions.switch_languages = async.wrap(function(window, state)
-  local p = window.prop
-  local source, target, detected = p.source, p.target, p.detected
+  local source, target, detected = window.source, window.target, window.detected
 
-  if state.previous and state.previous[p.source] and state.previous[p.target] then
-    p.source, p.target = state.previous[p.source], state.previous[p.target]
+  if state.previous and state.previous[window.source] and state.previous[window.target] then
+    window.source, window.target = state.previous[window.source], state.previous[window.target]
   else
-    p.source, p.target = p.engine.switch(detected or source, target)
+    window.source, window.target = window.engine.switch(detected or source, target)
   end
 
-  if p.source ~= source and p.target ~= target then
-    p.detected = nil
-    p.input = p.translation
+  if window.source ~= source and window.target ~= target then
+    window.detected = nil
+    window.input = window.translation
     actions.translate(window)
   end
 
   state.previous = {
-    [p.source] = source,
-    [p.target] = target,
+    [window.source] = source,
+    [window.target] = target,
   }
 end)
 
 actions.translate = async.wrap(function(window)
-  local input, source, target = window.prop.input, window.prop.source, window.prop.target
-  local translation = #input > 0 and window.prop.engine.translate(input, source, target) or {}
-  window.prop.translation = translation.text or ""
-  window.prop.detected = translation.detected
+  local input, source, target = window.input, window.source, window.target
+  local translation = #input > 0 and window.engine.translate(input, source, target) or {}
+  window.translation = translation.text or ""
+  window.detected = translation.detected
 end)
 
 return actions

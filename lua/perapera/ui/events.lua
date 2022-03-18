@@ -7,8 +7,8 @@ local events = {
 
 local function timeout_translate(window, state)
   state.timer:start(events.timeout, 0, vim.schedule_wrap(function()
-    if window.prop.input ~= state.previous_input then
-      state.previous_input = window.prop.input
+    if window.input ~= state.previous_input then
+      state.previous_input = window.input
       actions.translate(window)
     end
   end))
@@ -24,7 +24,7 @@ events.events = {
 function events.setup(window, bufnr)
   local state = {
     timer = vim.loop.new_timer(),
-    previous_input = window.prop.input
+    previous_input = window.input
   }
   -- BufEnter
   actions.translate(window)
