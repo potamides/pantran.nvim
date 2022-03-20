@@ -146,7 +146,7 @@ function window:update()
     id = self._title_id,
     virt_text = title
   })
-  -- also set title as normal text so that resize resizes correctly
+  -- also set title as normal text so that window:resize resizes correctly
   self._title = table.concat(vim.tbl_map(function(v) return v[1] end, title))
   self:resize()
 
@@ -154,23 +154,29 @@ function window:update()
   self._left_id = self:_set_virtual(self._win.languagebar.bufnr, {id = self._left_id})
   self._right_id = self:_set_virtual(self._win.languagebar.bufnr, {id = self._right_id})
 
-  async.run(function()
-    local langs = self._engine.languages()
-    local source, target = langs.source[self._source], langs.target[self._target]
-    local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
+  async.serial_run(window._update_languages, self)
+end
 
+function window:_update_languages()
+  local langs = self._engine.languages()
+  local source, target = langs.source[self._source], langs.target[self._target]
+  local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
+
+  if source then
     self._left_id = self:_set_virtual(self._win.languagebar.bufnr, {
       id = self._left_id,
       virt_text = {{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil},
       separate = true
     })
+  end
+  if target then
     self._right_id = self:_set_virtual(self._win.languagebar.bufnr, {
       id = self._right_id,
       virt_text = {{target, "PeraperaLanguagebar"}},
       separate = true,
       right_align = true
     })
-  end)
+  end
 end
 
 function window._create_window(enter, conf, options)
