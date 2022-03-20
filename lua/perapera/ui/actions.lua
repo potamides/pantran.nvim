@@ -73,12 +73,12 @@ end
 
 -- TODO: implement a more integrated picker for these kind of functions
 actions.set_source = async.wrap(function(window)
-  local langs  = window.engine.languages().source
+  local langs = window.engine.languages().source
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "source"))
 end)
 
 actions.set_target = async.wrap(function(window)
-  local langs  = window.engine.languages().target
+  local langs = window.engine.languages().target
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "target"))
 end)
 
