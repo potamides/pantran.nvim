@@ -212,12 +212,10 @@ end
 
 function window.prop.set:translation(translation)
   window._set_text(self._win.translation.bufnr, translation)
-  self:update()
 end
 
 function window.prop.set:input(input)
   window._set_text(self._win.input.bufnr, input)
-  self:update()
 end
 
 function window.prop.get:engine()
