@@ -118,9 +118,15 @@ end)
 
 actions.translate = async.wrap(function(window)
   local input, source, target = window.input, window.source, window.target
-  local translation = #input > 0 and window.engine.translate(input, source, target) or {}
-  window.translation = translation.text or ""
-  window.detected = translation.detected
+
+  if #input > 0 then
+    local translated = window.engine.translate(input, source, target)
+    window.translation = translated.text
+    window.detected = translated.detected
+  elseif #window.translation > 0 then
+    window.translation = ""
+    window.detected = nil
+  end
 end)
 
 return actions
