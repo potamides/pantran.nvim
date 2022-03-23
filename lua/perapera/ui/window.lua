@@ -87,7 +87,7 @@ end
 function window._set_text(bufnr, text)
   -- check if window was closed already
   if vim.api.nvim_buf_is_valid(bufnr) then
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(text, "\n", {plain = true}))
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, true, vim.split(text or "", "\n", {plain = true}))
   end
 end
 

@@ -89,6 +89,7 @@ actions.set_engine = async.wrap(function(window)
       window.engine = engine
       window.source = engine.config.default_source
       window.target = engine.config.default_target
+      window.detected = nil
       actions.translate(window)
     end
   end
@@ -98,21 +99,22 @@ end)
 actions.switch_languages = async.wrap(function(window, state)
   local source, target, detected = window.source, window.target, window.detected
 
-  if state.previous and state.previous[window.source] and state.previous[window.target] then
-    window.source, window.target = state.previous[window.source], state.previous[window.target]
+  if not detected and state.previous and state.previous.source[source] and state.previous.target[target] then
+    window.source, window.target = state.previous.source[source], state.previous.target[target]
   else
     window.source, window.target = window.engine.switch(detected or source, target)
   end
 
-  if window.source ~= source and window.target ~= target then
-    window.detected = nil
+  if window.source ~= source or window.target ~= target then
     window.input = window.translation
+    window.detected = nil
     actions.translate(window)
   end
 
   state.previous = {
-    [window.source] = source,
-    [window.target] = target,
+    -- put source and target in different tables for the edge case that they are the same
+    source = {[window.source] = source},
+    target = {[window.target] = target}
   }
 end)
 
@@ -124,7 +126,7 @@ actions.translate = async.wrap(function(window)
     window.translation = translated.text
     window.detected = translated.detected
   elseif #window.translation > 0 then
-    window.translation = ""
+    window.translation = nil
     window.detected = nil
   end
 end)
