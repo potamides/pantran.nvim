@@ -1,5 +1,5 @@
 local config = require("perapera.config")
-local utils = require("perapera.utils")
+local utable = require("perapera.utils.table")
 
 local engines = {
   argos = require("perapera.engines.argos"),
@@ -8,7 +8,7 @@ local engines = {
   __index = {
     -- set config in metatable to hide it when iterating engines in main table
     config = {
-      default_engine = "argos"
+      default_engine = "deepl"
     }
   }
 }
@@ -16,7 +16,7 @@ local engines = {
 
 config.apply(
   config.user.engines,
-  setmetatable(engines, utils.pop(engines, "_mt"))
+  setmetatable(engines, utable.pop(engines, "_mt"))
 )
 getmetatable(engines).__index.default = engines[engines.config.default_engine]
 

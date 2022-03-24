@@ -1,4 +1,4 @@
-local utils = require("perapera.utils")
+local buffer = require("perapera.utils.buffer")
 local actions = require("perapera.ui.actions")
 
 local events = {
@@ -36,7 +36,7 @@ function events.setup(window, bufnr)
       action = table.remove(handler)
       args = handler
     end
-    utils.buf_autocmd(bufnr, vim.tbl_extend("keep", args, {
+    buffer.autocmd(bufnr, vim.tbl_extend("keep", args, {
       events = event,
       nested = true,
       callback = function() action(window, state) end

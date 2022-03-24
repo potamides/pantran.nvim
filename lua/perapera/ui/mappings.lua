@@ -1,5 +1,5 @@
 local actions = require("perapera.ui.actions")
-local utils = require("perapera.utils")
+local buffer = require("perapera.utils.buffer")
 
 local mappings = {}
 
@@ -40,7 +40,7 @@ function mappings.setup(window, bufnr)
   local opts, state = {noremap = true, silent = true}, {}
   for mode, maps in pairs(mappings.mappings) do
     for lhs, rhs in pairs(maps) do
-      utils.buf_keymap(bufnr, {mode = mode, lhs = lhs, rhs = function() rhs(window, state) end, opts = opts})
+      buffer.keymap(bufnr, {mode = mode, lhs = lhs, rhs = function() rhs(window, state) end, opts = opts})
     end
   end
 end

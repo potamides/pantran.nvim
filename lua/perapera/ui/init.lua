@@ -3,7 +3,7 @@ local mappings = require("perapera.ui.mappings")
 local window = require("perapera.ui.window")
 local async = require("perapera.async")
 local config = require("perapera.config")
-local utils = require("perapera.utils")
+local properties = require("perapera.utils.properties")
 
 local ui = {
   config = {
@@ -149,7 +149,7 @@ end
 function ui.new(engine, source, target)
   local coords = ui._compute_win_coords()
 
-  local self = utils.make_properties(setmetatable({
+  local self = properties.make(setmetatable({
       _engine = engine,
       _source = source or engine.config.default_source,
       _target = target or engine.config.default_target,
