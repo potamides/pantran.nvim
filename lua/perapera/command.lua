@@ -1,6 +1,6 @@
 local async = require("perapera.async")
 local engines = require("perapera.engines")
-local window = require("perapera.ui.window")
+local ui = require("perapera.ui")
 
 local command = {
   subcommands = {
@@ -40,7 +40,7 @@ function command.translate(srow, erow, opts)
 
   async.run(function()
     local engine = engines[opts.engine or "default"]
-    window.new(engine)
+    ui.new(engine)
   end)
 end
 

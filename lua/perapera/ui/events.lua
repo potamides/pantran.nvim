@@ -18,7 +18,7 @@ events.events = {
   CursorMoved = timeout_translate,
   CursorMovedI = timeout_translate,
   VimResized = actions.resize,
-  BufLeave = {actions.close, once = true}
+  WinLeave = {actions.close, once = true}
 }
 
 function events.setup(window, bufnr)
