@@ -109,7 +109,8 @@ function ui.prop.set:source(source)
 end
 
 function ui.prop.set:detected(detected)
-  self._detected = detected
+  local input = self._win.input:get_text()
+  self._detected = #input > 0 and detected or nil
   self:update()
 end
 
@@ -119,7 +120,8 @@ function ui.prop.set:target(target)
 end
 
 function ui.prop.set:translation(translation)
-  self._win.translation:set_text(translation)
+  local input = self._win.input:get_text()
+  self._win.translation:set_text(#input > 0 and translation or nil)
 end
 
 function ui.prop.set:input(input)
