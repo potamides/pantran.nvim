@@ -10,4 +10,24 @@ function table.pop(tbl, key)
   end
 end
 
+function table.defaulttable(default, weak_keys)
+  local tbl, mt = {}, {}
+
+  function mt.__index(_, key)
+    local val = rawget(tbl, key)
+    if val then
+      return val
+    else
+      rawset(tbl, key, vim.deepcopy(default))
+      return rawget(tbl, key)
+    end
+  end
+
+  if weak_keys then
+    mt.__mode = "k"
+  end
+
+  return setmetatable(tbl, mt)
+end
+
 return table
