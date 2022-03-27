@@ -5,6 +5,7 @@ local events = {
   timeout = 300
 }
 
+-- TODO: move this to actions
 local function timeout_translate(window, state)
   state.timer:start(events.timeout, 0, vim.schedule_wrap(function()
     if window.input ~= state.previous_input then
@@ -14,6 +15,7 @@ local function timeout_translate(window, state)
   end))
 end
 
+-- TODO: configuration
 events.events = {
   CursorMoved = timeout_translate,
   CursorMovedI = timeout_translate,
@@ -22,6 +24,7 @@ events.events = {
 }
 
 function events.setup(window, bufnr)
+  -- TODO: global state
   local state = {
     timer = vim.loop.new_timer(),
     previous_input = window.input

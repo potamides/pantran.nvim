@@ -3,6 +3,7 @@ local buffer = require("perapera.utils.buffer")
 
 local mappings = {}
 
+-- TODO configuration
 mappings.mappings = {
   i = {
     ["<C-c>"] = actions.close,
