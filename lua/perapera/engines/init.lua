@@ -8,7 +8,7 @@ local engines = {
   __index = {
     -- set config in metatable to hide it when iterating engines in main table
     config = {
-      default_engine = "deepl"
+      default_engine = "argos"
     }
   }
 }
