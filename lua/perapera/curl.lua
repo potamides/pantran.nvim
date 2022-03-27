@@ -3,15 +3,18 @@ local config = require("perapera.config")
 
 local curl = {
   config = {
-    curl_cmd = "curl",
-    retry = 3
+    cmd = "curl",
+    retry = 3,
+    timeout = 10
   }
 }
 
 function curl:_spawn(request, path, data, callback)
-  local cmd, stdout, response, handle = self.config.curl_cmd, vim.loop.new_pipe(), ""
+  local cmd, stdout, response, handle = self.config.cmd, vim.loop.new_pipe(), ""
   local args = {
     "--retry", self.config.retry,
+    "--max-time", self.config.timeout,
+    "--retry-max-time", self.config.timeout,
     "--request", request,
     "--header", "accept: application/json",
     tostring(self._url / path)
