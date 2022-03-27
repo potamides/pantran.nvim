@@ -73,35 +73,43 @@ end
 
 -- TODO: implement a more integrated picker for these kind of functions
 actions.set_source = async.wrap(function(window)
+  window:lock()
   local langs = window.engine.languages().source
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "source"))
+  window:unlock()
 end)
 
 actions.set_target = async.wrap(function(window)
+  window:lock()
   local langs = window.engine.languages().target
   vim.ui.select(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, on_lang(window, "target"))
+  window:unlock()
 end)
 
 actions.set_engine = async.wrap(function(window)
   local function on_choice(name)
     if name then
+      window:lock()
       local engine = engines[name]
       window.engine = engine
       window.source = engine.config.default_source
       window.target = engine.config.default_target
       window.detected = nil
       actions.translate(window)
+      window:unlock()
     end
   end
   vim.ui.select(vim.tbl_keys(engines), nil, on_choice)
 end)
 
 actions.switch_languages = async.wrap(function(window, state)
+  window:lock()
   local source, target, detected = window.source, window.target, window.detected
 
   if not detected and state.previous and state.previous.source[source] and state.previous.target[target] then
     window.source, window.target = state.previous.source[source], state.previous.target[target]
   else
+    -- TODO; switching with detected causes problem when switching fails
     window.source, window.target = window.engine.switch(detected or source, target)
   end
 
@@ -116,19 +124,17 @@ actions.switch_languages = async.wrap(function(window, state)
     source = {[window.source] = source},
     target = {[window.target] = target}
   }
+  window:unlock()
 end)
 
 actions.translate = async.wrap(function(window)
+  window:lock()
   local input, source, target = window.input, window.source, window.target
+  local translated = #input > 0 and window.engine.translate(input, source, target) or {}
 
-  if #input > 0 then
-    local translated = window.engine.translate(input, source, target)
-    window.translation = translated.text
-    window.detected = translated.detected
-  elseif #window.translation > 0 then
-    window.translation = nil
-    window.detected = nil
-  end
+  window.translation = translated.text
+  window.detected = translated.detected
+  window:unlock()
 end)
 
 return actions

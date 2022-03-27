@@ -65,33 +65,37 @@ end
 function ui:update()
   self._win.languagebar:set_title(self._engine.name)
 
-  -- clear source and target languages before updating asynchronously (which can take time)
-  self._left_id = self._win.languagebar:set_virtual{id = self._left_id}
-  self._right_id = self._win.languagebar:set_virtual{id = self._right_id}
+  async.run(function()
+    self:lock()
+    local langs = self._engine.languages()
+    local source, target = langs.source[self._source], langs.target[self._target]
+    local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
 
-  async.serial_run(ui._update_languages, self)
+    if source then
+      self._left_id = self._win.languagebar:set_virtual{
+        id = self._left_id,
+        virt_text = {{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil},
+        separator = " "
+      }
+    end
+    if target then
+      self._right_id = self._win.languagebar:set_virtual{
+        id = self._right_id,
+        virt_text = {{target, "PeraperaLanguagebar"}},
+        separator = " ",
+        right_align = true
+      }
+    end
+    self:unlock()
+  end)
 end
 
-function ui:_update_languages()
-  local langs = self._engine.languages()
-  local source, target = langs.source[self._source], langs.target[self._target]
-  local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
+function ui:lock()
+  self._mutex:lock()
+end
 
-  if source then
-    self._left_id = self._win.languagebar:set_virtual{
-      id = self._left_id,
-      virt_text = {{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil},
-      separator = " "
-    }
-  end
-  if target then
-    self._right_id = self._win.languagebar:set_virtual{
-      id = self._right_id,
-      virt_text = {{target, "PeraperaLanguagebar"}},
-      separator = " ",
-      right_align = true
-    }
-  end
+function ui:unlock()
+  self._mutex:unlock()
 end
 
 function ui.prop.set:engine(engine)
@@ -153,6 +157,7 @@ function ui.new(engine, source, target)
       _engine = engine,
       _source = source or engine.config.default_source,
       _target = target or engine.config.default_target,
+      _mutex = async.mutex.new(),
       _win = {
         languagebar = window.new(coords.languagebar),
         translation = window.new(coords.translation),

@@ -36,16 +36,16 @@ function curl:_spawn(request, path, data, callback)
     },
     vim.schedule_wrap(function(code) -- on exit
       if code ~= 0 then
-        vim.notify(("%q exited with error code %d!"):format(cmd, code), vim.log.levels.ERROR)
+        callback(false, ("%q exited with error code %d!"):format(cmd, code))
       elseif callback then
         local ok, decoded = pcall(vim.fn.json_decode, response)
         if ok then
-          callback(decoded)
           if vim.tbl_contains(self._static_paths, path) then
             self._cache[table.concat(args)] = decoded
           end
+          callback(true, decoded)
         else
-          vim.notify("Couldn't decode JSON response.", vim.log.levels.ERROR)
+          callback(false, "Couldn't decode JSON response.")
         end
       end
       handle:close()
@@ -55,13 +55,13 @@ function curl:_spawn(request, path, data, callback)
   if handle then
     stdout:read_start(vim.schedule_wrap(function(err, chunk)
       if err then
-        vim.notify(err, vim.log.levels.ERROR)
+        callback(false, err)
       elseif chunk then
         response = response .. chunk
       end
     end))
   else
-    vim.notify(("Something went wrong. Make sure that %q is installed."):format(cmd), vim.log.levels.ERROR)
+    callback(false, ("Something went wrong. Make sure that %q is installed."):format(cmd))
   end
 end
 
