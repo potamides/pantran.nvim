@@ -16,22 +16,20 @@ function argos.detect(text)
 end
 
 function argos.languages()
-  if not argos._languages then
-    local languages = {
-      source = {
-        auto = "Auto"
-      },
-      target = {}
-    }
+  local languages = {
+    source = {
+      auto = "Auto"
+    },
+    target = {}
+  }
 
-    for _, lang in pairs(argos._api:get("languages")) do
-      languages.source[lang.code] = lang.name
-      languages.target[lang.code] = lang.name
-    end
-    argos._languages = languages
+  for _, lang in pairs(argos._api:get("languages")) do
+    languages.source[lang.code] = lang.name
+    languages.target[lang.code] = lang.name
   end
+  argos._languages = languages
 
-  return argos._languages
+  return languages
 end
 
 function argos.switch(source, target)
@@ -58,7 +56,8 @@ end
 function argos.setup()
   argos._api = curl.new{
     url = argos.config.url,
-    auth = argos.config.auth
+    auth = argos.config.auth,
+    static_paths = {"languages"}
   }
 end
 

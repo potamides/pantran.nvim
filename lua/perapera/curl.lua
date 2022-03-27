@@ -25,6 +25,11 @@ function curl:_spawn(request, path, data, callback)
     table.insert(args, 1, "--data-urlencode")
   end
 
+  if self._cache[table.concat(args)] then
+    callback(true, self._cache[table.concat(args)])
+    return
+  end
+
   handle = vim.loop.spawn(cmd, {
       args = args,
       stdio = {nil, stdout, nil}
@@ -36,6 +41,9 @@ function curl:_spawn(request, path, data, callback)
         local ok, decoded = pcall(vim.fn.json_decode, response)
         if ok then
           callback(decoded)
+          if vim.tbl_contains(self._static_paths, path) then
+            self._cache[table.concat(args)] = decoded
+          end
         else
           vim.notify("Couldn't decode JSON response.", vim.log.levels.ERROR)
         end
@@ -92,6 +100,8 @@ function curl.new(args)
   local self = {
     _url = curl.url(args.url),
     _auth = args.auth or {},
+    _static_paths = args.static_paths or {},
+    _cache = {}
   }
 
   return setmetatable(self, {__index = curl})

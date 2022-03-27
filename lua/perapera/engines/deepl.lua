@@ -19,23 +19,20 @@ function deepl.usage()
 end
 
 function deepl.languages()
-  if not deepl._languages then
-    local languages = {
-      source = {
-        [vim.NIL] = "Auto"
-      },
-      target = {}
-    }
+  local languages = {
+    source = {
+      [vim.NIL] = "Auto"
+    },
+    target = {}
+  }
 
-    for type_, tbl in pairs(languages) do
-      for _, lang in pairs(deepl._api:post("languages", {["type"] = type_})) do
-        tbl[lang.language] = lang.name
-      end
+  for type_, tbl in pairs(languages) do
+    for _, lang in pairs(deepl._api:post("languages", {["type"] = type_})) do
+      tbl[lang.language] = lang.name
     end
-    deepl._languages = languages
   end
 
-  return deepl._languages
+  return languages
 end
 
 function deepl.switch(source, target)
@@ -73,7 +70,8 @@ end
 function deepl.setup()
   deepl._api = curl.new{
     url = deepl.config.url,
-    auth = deepl.config.auth
+    auth = deepl.config.auth,
+    static_paths = {"languages"}
   }
 end
 
