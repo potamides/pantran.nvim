@@ -104,17 +104,17 @@ end)
 
 actions.switch_languages = async.wrap(function(window, state)
   window:lock()
-  local source, target, detected = window.source, window.target, window.detected
-
+  local source, target, detected, new_src, new_tgt = window.source, window.target, window.detected
   if not detected and state.previous and state.previous.source[source] and state.previous.target[target] then
-    window.source, window.target = state.previous.source[source], state.previous.target[target]
+    new_src, new_tgt = state.previous.source[source], state.previous.target[target]
   else
-    -- TODO; switching with detected causes problem when switching fails
-    window.source, window.target = window.engine.switch(detected or source, target)
+    new_src, new_tgt = window.engine.switch(detected or source, target)
   end
 
-  if window.source ~= source or window.target ~= target then
+  if new_src ~= (detected or source) or window.target ~= target then
     window.input = window.translation
+    window.source = new_src
+    window.target = new_tgt
     window.detected = nil
     actions.translate(window)
   end
