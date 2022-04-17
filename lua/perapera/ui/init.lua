@@ -12,6 +12,7 @@ local ui = {
     height_percentage = 0.3,
     min_height = 10,
     min_width = 40,
+    scrollbind = true
   },
   prop = {
     set = {},
@@ -189,6 +190,8 @@ function ui.new(engine, source, target)
       previous = {} -- store for previous input, source, target, etc.
     }, {__index = ui}))
 
+  self._win.input:set_option("scrollbind", self.config.scrollbind)
+  self._win.translation:set_option("scrollbind", self.config.scrollbind)
   self.select = selector.new(self._win.languagebar, self._win.input)
   self._win.input:enter()
   controls.setup(self, self._win.input.bufnr, self._win.languagebar.virtnr)
