@@ -1,10 +1,10 @@
-local events = require("perapera.ui.events")
-local mappings = require("perapera.ui.mappings")
+local controls = require("perapera.ui.controls")
 local window = require("perapera.ui.window")
 local selector = require("perapera.ui.select")
 local async = require("perapera.async")
 local config = require("perapera.config")
 local properties = require("perapera.utils.properties")
+local bufutils = require("perapera.utils.buffer")
 
 local ui = {
   config = {
@@ -191,9 +191,21 @@ function ui.new(engine, source, target)
 
   self.select = selector.new(self._win.languagebar, self._win.input)
   self._win.input:enter()
-  events.setup(self, self._win.input.bufnr)
-  mappings.setup(self, self._win.input.bufnr)
+  controls.setup(self, self._win.input.bufnr, self._win.languagebar.virtnr)
   self:update()
+
+  bufutils.autocmd(self._win.input.bufnr, {
+    events = "VimResized",
+    nested = true,
+    callback = function() self:resize() end
+  })
+
+  bufutils.autocmd(self._win.input.bufnr, {
+    events = "WinLeave",
+    nested = true,
+    once = true,
+    callback = function() self:close() end
+  })
 
   return self
 end
