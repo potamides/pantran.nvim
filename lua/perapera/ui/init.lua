@@ -165,6 +165,7 @@ function ui.new(engine, source, target)
         translation = window.new(coords.translation),
         input = window.new(coords.input)
       },
+      previous = {} -- store for previous input, source, target, etc.
     }, {__index = ui}))
 
   self._win.input:enter()
