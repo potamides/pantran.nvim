@@ -49,7 +49,7 @@ actions.switch_languages = async.wrap(function(ui)
     ui.source = new_src
     ui.target = new_tgt
     ui.detected = nil
-    actions.translate(ui)
+    actions.translate(ui, true)
   end
 
   -- put source and target in different tables for the edge case that they are the same
@@ -58,9 +58,9 @@ actions.switch_languages = async.wrap(function(ui)
   ui:unlock()
 end)
 
-actions.translate = async.wrap(function(ui)
+actions.translate = async.wrap(function(ui, force)
   ui:lock()
-  if ui.input ~= ui.previous.input then
+  if force or ui.input ~= ui.previous.input then
     local translated = #ui.input > 0 and ui.engine.translate(ui.input, ui.source, ui.target) or {}
 
     ui.previous.input = ui.input
@@ -76,7 +76,7 @@ actions.select_source = async.wrap(function(ui)
   ui:select_left(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, function(lang)
     if lang then
       ui.source = lang
-      actions.translate(ui)
+      actions.translate(ui, true)
     end
   end)
   ui:unlock()
@@ -88,7 +88,7 @@ actions.select_target = async.wrap(function(ui)
   ui:select_right(vim.tbl_keys(langs), {format_item = function(l) return langs[l] end}, function(lang)
     if lang then
       ui.target = lang
-      actions.translate(ui)
+      actions.translate(ui, true)
     end
   end)
   ui:unlock()
@@ -103,7 +103,7 @@ actions.select_engine = async.wrap(function(ui)
       ui.source = engine.config.default_source
       ui.target = engine.config.default_target
       ui.detected = nil
-      actions.translate(ui)
+      actions.translate(ui, true)
     end
   end)
   ui:unlock()
