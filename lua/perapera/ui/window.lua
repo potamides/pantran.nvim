@@ -2,7 +2,7 @@ local config = require("perapera.config")
 
 local window = {
   config = {
-    title_border = {"┤ ", " ├"}, -- TODO: make the default without bars
+    title_border = {"┤ ", " ├"},
     window_config = {
       relative = "editor",
       border   = "single"
@@ -12,47 +12,137 @@ local window = {
       relativenumber = false,
       cursorline     = false,
       cursorcolumn   = false,
+      linebreak      = true,
+      wrap           = true,
       foldcolumn     = "0",
       signcolumn     = "auto",
       colorcolumn    = "",
       fillchars      = "eob: ",
-      winhighlight   = "Normal:PeraperaNormal,FloatBorder:PeraperaBorder",
+      winhighlight   = "Normal:PeraperaNormal,SignColumn:PeraperaNormal,FloatBorder:PeraperaBorder",
       textwidth      = 0,
     }
   }
 }
 
-function window:set_text(text)
-  -- check if window was closed already
-  vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, vim.split(text or "", "\n", {plain = true}))
+function window._buf_get_text(buf)
+  return table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, true), "\n")
 end
 
 function window:get_text()
-  return table.concat(vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, true), "\n")
+  return window._buf_get_text(self.bufnr)
 end
 
--- TODO: make right_align string argument and allow setting coordinates in parameters (or virt_lines)
--- TODO: look virt_text_win_col
+function window._buf_set_text(buf, text)
+  -- Clear undo history when changing text programmatically
+  local old_undolevels = vim.api.nvim_buf_get_option(buf, "undolevels")
+  vim.api.nvim_buf_set_option(buf, "undolevels", -1)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, true, vim.split(text or "", "\n", {plain = true}))
+  vim.api.nvim_buf_set_option(buf, "undolevels", old_undolevels)
+end
+
+function window:_set_buf(buf)
+  if vim.api.nvim_win_get_buf(self.win_id) ~= buf then
+    vim.api.nvim_win_set_buf(self.win_id, buf)
+  end
+end
+
+function window:set_text(text)
+  self._buf_set_text(self.bufnr, text)
+  self:_set_buf(self.bufnr)
+end
+
+function window:get_virtual()
+  return vim.trim(window._buf_get_text(self.virtnr))
+end
+
 function window:set_virtual(args)
-  local virt_text = vim.list_slice(args.virt_text or {})
-  if args.separator then
-    local sep = {args.separator, "PeraperaNormal"}
-    for idx = #virt_text,0,-1 do
-      if idx == #virt_text and args.right_align then
-        table.insert(virt_text, idx + 1, sep)
-      elseif idx == 0 and not args.right_align then
-        table.insert(virt_text, idx + 1, sep)
-      elseif idx >= 1 and idx < #virt_text then
-        table.insert(virt_text, idx + 1, sep)
-      end
-    end
+  args = args or {}
+  -- Create enough lines to be able to create one extmark on each line for each
+  -- virt_text tuple. Using builtin virt_lines feature would be nicer but they
+  -- have some issues right now, e.g. they don't scroll, hl_eol doesn't work,
+  -- etc (see https://github.com/neovim/neovim/issues/16166).
+  if not args.nomodify then
+    self._buf_set_text(
+      self.virtnr,
+      ("\n"):rep(math.max(
+        args.left and #args.left or math.max(#self._extmarks.left, #self._signs),
+        #(args.right or self._extmarks.right)))
+    )
   end
 
-  return vim.api.nvim_buf_set_extmark(self.bufnr, self._namespace, 0, 0, {
-    id = args.id,
-    virt_text_pos = args.right_align and "right_align" or "overlay",
-    virt_text = virt_text
-  })
+  -- abuse signcolumn to get primitive anti-conceal (see https://github.com/neovim/neovim/issues/16466)
+  if args.left and args.displace then
+    for idx, sign in ipairs(args.left) do
+      local name = ("Perapera-%p-%d"):format(self, idx)
+      vim.fn.sign_define{{name = name, text = sign[1][1], texthl = sign[1][2]}}
+      self._signs[idx] = {
+        name = name,
+        id = vim.fn.sign_place(
+          self._signs[idx] and self._signs[idx].id or 0,
+          "perapera",
+          name,
+          self.virtnr,
+          {lnum = idx}
+      )}
+    end
+    self:_clear_extmarks(nil, "left")
+    self:_clear_signs(#args.left + 1)
+  elseif args.left then
+    self:_clear_signs()
+  end
+
+  for pos, lines in pairs{left = not args.displace and args.left or nil, right = args.right} do
+    self:_clear_extmarks(#lines + 1, pos)
+    for idx, line in ipairs(lines) do
+
+      if args.separator then
+        local sep = {args.separator, "PeraperaNormal"}
+        for i = #line - 1, 1, -1 do
+          table.insert(line, i + 1, sep)
+        end
+      end
+
+      if args.margin then
+        local margin = {args.margin, "PeraperaNormal"}
+        table.insert(line, pos == "right" and #line + 1 or 1, margin)
+      end
+
+      self._extmarks[pos][idx] = vim.api.nvim_buf_set_extmark(self.virtnr, self._namespace, idx - 1, 0, {
+        id = self._extmarks[pos][idx],
+        virt_text_pos = pos == "right" and "right_align" or "overlay",
+        hl_group = line[#line][2],
+        hl_eol = args.hl_eol,
+        right_gravity = false,
+        virt_text = line
+      })
+    end
+  end
+  self:_set_buf(self.virtnr)
+end
+
+function window:_clear_extmarks(start, pos)
+  local to_delete = pos and {[pos] = self._extmarks[pos]} or self._extmarks
+
+  for _, extmarks in pairs(to_delete) do
+    for idx = #extmarks, start or 1, -1 do
+      vim.api.nvim_buf_del_extmark(self.virtnr, self._namespace, table.remove(extmarks, idx))
+    end
+  end
+end
+
+function window:_clear_signs(start)
+  for idx = #self._signs, start or 1, -1 do
+    local sign = table.remove(self._signs, idx)
+    vim.fn.sign_unplace("perapera", {buffer = self.virtnr, id = sign.id})
+    vim.fn.sign_undefine(sign.name)
+  end
+end
+
+function window:clear_virtual()
+  self:_clear_extmarks()
+  self:_clear_signs()
+  self._buf_set_text(self.virtnr, nil)
+  self:_set_buf(self.bufnr)
 end
 
 function window:set_title(title)
@@ -71,19 +161,18 @@ function window:set_title(title)
     self.title = window.new(title_conf)
   else
     self.title:set_config(title_conf)
-    -- without this the title isn't properly redrawn, might be related to https://github.com/neovim/neovim/issues/11597
-    -- TODO: investigate this further
+    -- FIXME: without this the title isn't properly redrawn, might be related
+    -- to https://github.com/neovim/neovim/issues/11597. Need investigate this
+    -- further.
     vim.cmd[[mode]]
   end
 
   self._title = title
-  self._title_id = self.title:set_virtual{
-    id = self._title_id,
-    virt_text = {
-      {self.config.title_border[1], "PeraperaBorder"},
-      {title, "PeraperaTitle"},
-      {self.config.title_border[2], "PeraperaBorder"}
-  }}
+  self.title:set_virtual{left = {{
+    {self.config.title_border[1], "PeraperaBorder"},
+    {title, "PeraperaTitle"},
+    {self.config.title_border[2], "PeraperaBorder"}
+  }}}
 end
 
 function window:set_config(conf)
@@ -101,38 +190,69 @@ function window:set_option(option, value)
   local scope = vim.api.nvim_get_option_info(option).scope
   if  scope == "buf" then
     vim.api.nvim_buf_set_option(self.bufnr, option, value)
+    vim.api.nvim_buf_set_option(self.virtnr, option, value)
   elseif scope == "win" then
     vim.api.nvim_win_set_option(self.win_id, option, value)
   end
 end
 
 function window:close()
-  vim.api.nvim_buf_delete(self.bufnr, {})
+  pcall(vim.api.nvim_buf_delete, self.bufnr, {})
+  pcall(vim.api.nvim_buf_delete, self.virtnr, {})
   if self.title then
     self.title:close()
   end
 end
 
-function window:enter()
-  vim.api.nvim_set_current_win(self.win_id)
+function window:scroll_to(line)
+  vim.api.nvim_win_set_cursor(self.win_id, {line, vim.api.nvim_win_get_cursor(self.win_id)[2]})
+end
+
+function window._enter_win(win_id, noautocmd)
+  local old_ignore = vim.o.eventignore
+  if noautocmd then
+    vim.o.eventignore = "all"
+  end
+  vim.api.nvim_set_current_win(win_id)
+  if noautocmd then
+    vim.o.eventignore = old_ignore
+  end
+end
+
+function window:enter(noautocmd, startinsert)
+  self._enter_win(self.win_id, noautocmd)
+  if startinsert then
+    vim.cmd[[startinsert]]
+  else
+    vim.cmd[[stopinsert]]
+  end
+end
+
+function window:exit(noautocmd)
+  self._enter_win(vim.fn.winnr("#"), noautocmd)
 end
 
 function window._create(conf)
   conf = vim.tbl_extend("force", window.config.window_config, conf)
 
+  -- use own buffer for virtual text, as due to some current issues mentioned
+  -- above the actual text needs to be modified which would affect undo
+  -- history, autocmds, etc when we would do it in the same buffer
+  local virtnr = vim.api.nvim_create_buf(false, true)
   local bufnr = vim.api.nvim_create_buf(false, true)
   local win_id = vim.api.nvim_open_win(bufnr, false, conf)
-  vim.api.nvim_win_set_buf(win_id, bufnr)
 
   return {
     bufnr = bufnr,
+    virtnr = virtnr,
     win_id = win_id
   }
 end
 
 function window._safe_call(self, key)
+  local win_valid, buf_valid = vim.api.nvim_win_is_valid, vim.api.nvim_buf_is_valid
   if type(window[key]) == "function" then
-    if not vim.api.nvim_win_is_valid(self.win_id) or not vim.api.nvim_buf_is_valid(self.bufnr) then
+    if not win_valid(self.win_id) or not buf_valid(self.bufnr) or not buf_valid(self.virtnr) then
       return function() end
     end
   end
@@ -143,6 +263,10 @@ end
 function window.new(conf)
   local self = setmetatable(window._create(conf), {__index = window._safe_call})
   self._namespace = vim.api.nvim_create_namespace("perapera")
+  self._signs, self._extmarks = {}, {
+    right = {},
+    left = {}
+  }
 
   for option, value in pairs(self.config.options) do
     self:set_option(option, value)

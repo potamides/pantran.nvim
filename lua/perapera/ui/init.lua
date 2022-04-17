@@ -1,6 +1,7 @@
 local events = require("perapera.ui.events")
 local mappings = require("perapera.ui.mappings")
 local window = require("perapera.ui.window")
+local selector = require("perapera.ui.select")
 local async = require("perapera.async")
 local config = require("perapera.config")
 local properties = require("perapera.utils.properties")
@@ -72,21 +73,41 @@ function ui:update()
     local detected = self._detected and ("(%s)"):format(langs.source[self._detected])
 
     if source then
-      self._left_id = self._win.languagebar:set_virtual{
-        id = self._left_id,
-        virt_text = {{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil},
-        separator = " "
+      self._win.languagebar:set_virtual{
+        left = {{{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil}},
+        separator = " ",
+        margin = " "
       }
     end
     if target then
-      self._right_id = self._win.languagebar:set_virtual{
-        id = self._right_id,
-        virt_text = {{target, "PeraperaLanguagebar"}},
-        separator = " ",
-        right_align = true
+      self._win.languagebar:set_virtual{
+        right = {{{target, "PeraperaLanguagebar"}}},
+        margin = " ",
       }
     end
     self:unlock()
+  end)
+end
+
+function ui:select_left(items, opts, on_choice)
+  self.select:set_item_win(self._win.input)
+  self.select(items, opts, function(...)
+    self._win.input:enter()
+    self._win.input:clear_virtual()
+    self._win.languagebar:clear_virtual()
+    on_choice(...)
+    self:update()
+  end)
+end
+
+function ui:select_right(items, opts, on_choice)
+  self.select:set_item_win(self._win.translation)
+  self.select(items, opts, function(...)
+    self._win.input:enter()
+    self._win.translation:clear_virtual()
+    self._win.languagebar:clear_virtual()
+    on_choice(...)
+    self:update()
   end)
 end
 
@@ -168,6 +189,7 @@ function ui.new(engine, source, target)
       previous = {} -- store for previous input, source, target, etc.
     }, {__index = ui}))
 
+  self.select = selector.new(self._win.languagebar, self._win.input)
   self._win.input:enter()
   events.setup(self, self._win.input.bufnr)
   mappings.setup(self, self._win.input.bufnr)
