@@ -253,7 +253,7 @@ function window._safe_call(self, key)
   local win_valid, buf_valid = vim.api.nvim_win_is_valid, vim.api.nvim_buf_is_valid
   if type(window[key]) == "function" then
     if not win_valid(self.win_id) or not buf_valid(self.bufnr) or not buf_valid(self.virtnr) then
-      return function() end
+      return function() return "" end -- FIXME: return function-specific default value
     end
   end
   return window[key]
