@@ -10,6 +10,8 @@ let g:loaded_perapera = 1
 
 command -range -nargs=* Perapera lua require("perapera.command").parse(<line1>, <line2>, unpack{<f-args>})
 
+command -range -nargs=* Perapera
+  \ lua require("perapera.command").parse(unpack{<f-args>})
 highlight default link PeraperaTitle Constant
 highlight default link PeraperaLanguagebar Identifier
 

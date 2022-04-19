@@ -1,68 +1,86 @@
-local async = require("perapera.async")
 local engines = require("perapera.engines")
 local ui = require("perapera.ui")
+local handlers = require("perapera.handlers")
+local async = require("perapera.async")
+local config = require("perapera.config")
 
 local command = {
-  subcommands = {
-    "translate",
-    "languages"
+  namespace = vim.api.nvim_create_namespace("perapera"),
+  config = {
+    default_mode = "interactive"
+  },
+  flags = {
+    mode = {
+      "append",
+      "interactive",
+      "hover",
+      "replace",
+      "yank"
+    },
+    engine = vim.fn.sort(vim.tbl_keys(engines)),
+    source = {},
+    target = {}
   }
 }
 
---local function visual_selection_range()
---  local _, srow, scol = unpack(vim.fn.getpos("'<"))
---  local _, erow, ecol = unpack(vim.fn.getpos("'>"))
---
---  --if erow < srow or (erow == srow and ecol <= scol) then
---  --  srow, scol, erow, ecol = erow, ecol, srow, scol
---  --end
---  print(srow, scol, erow, ecol)
---
---  local lines = vim.fn.getline(srow, erow)
---
---  lines[1] = lines[1]:sub(scol)
---  lines[#lines] = lines[#lines]:sub(1, ecol - (vim.o.selection == "inclusive" and 0 or 1))
---
---  return table.concat(lines, "\n")
---end
+-- recompute coords, since coords of marks could have changed during translation
+function command._marks2coords(marks, delete)
+  local start = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks[1], {})
+  local stop = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks[2], {})
 
-function command.translate(srow, erow, opts)
-  --perapera.async.run(function()
-  --  local text = table.concat(vim.fn.getline(srow, erow), "\n")
-  --  local engine = perapera.engines[opts.engine or "default"]
-  --  local translation = engine:translate(text, opts.source, opts.target, opts)
+  if delete then
+    for _, mark in pairs(marks) do
+      vim.api.nvim_buf_del_extmark(0, command.namespace, mark)
+    end
+  end
 
-  --  if vim.bo.modifiable then
-  --    vim.fn.append(erow, vim.split(translation, "\n"))
-  --    vim.fn.deletebufline('%', srow, erow)
-  --  end
-  --end)
-
-  async.run(function()
-    local engine = engines[opts.engine or "default"]
-    ui.new(engine)
-  end)
+  if not vim.tbl_isempty(start) and not vim.tbl_isempty(stop) then
+    return {srow = start[1], scol = start[2], erow = stop[1], ecol = stop[2]}
+  end
 end
 
-function command.languages(opts)
-  async.run(function()
-    print(opts)
-  end)
+function command._translate(input, initialize, marks, opts)
+  local engine = engines[opts.engine]
+
+  if opts.mode == "interactive" then
+    ui.new(engine, opts.source, opts.target, command._marks2coords(marks, true), initialize and input)
+  elseif handlers[opts.mode] then
+    async.run(function()
+      local translation = engine.translate(input, opts.source, opts.target).text
+      handlers[opts.mode](translation, command._marks2coords(marks, true))
+    end)
+  end
 end
 
-function command.parse(srow, erow, ...)
-  local opts, subcmd = {}, command.subcommands[1]
+function command.translate(opts)
+  opts = opts or {}
+  opts.mode = opts.mode or command.config.default_mode
+  opts.engine = opts.engine or "default"
+  opts.source = opts.source or engines[opts.engine].config.default_source
+  opts.target = opts.target or engines[opts.engine].config.default_target
 
-  for idx, arg in ipairs{...} do
-    if idx == 1 and vim.tbl_contains(command.subcommands, arg) then
-      subcmd = arg
-    else
-      local key, value = arg:match("(.-)=(.*)")
+  local srow = vim.api.nvim_win_get_cursor(0)[1] - 1
+  local scol, erow, ecol = 0, srow + vim.v.count, -1
+  local input = table.concat(vim.api.nvim_buf_get_lines(0, srow, erow + 1, true), "\n"):sub(scol + 1, ecol)
+  local marks = {
+    vim.api.nvim_buf_set_extmark(0, command.namespace, srow, scol, {}),
+    vim.api.nvim_buf_set_extmark(0, command.namespace, erow, ecol, {})
+  }
+
+  command._translate(input, vim.v.count > 0, marks, opts)
+end
+
+function command.parse(...)
+  local opts = {}
+
+  for _, arg in ipairs{...} do
+    local key, value = arg:match("(.-)=(.+)")
+    if key and value then
       opts[key] = value
     end
   end
 
-  command[subcmd](srow, erow, opts)
+  command.translate(opts)
 end
 
-return command
+return config.apply(config.user.command, command)
