@@ -8,10 +8,18 @@ if exists('g:loaded_perapera')
 endif
 let g:loaded_perapera = 1
 
-command -range -nargs=* Perapera lua require("perapera.command").parse(<line1>, <line2>, unpack{<f-args>})
+"" Command definition
+" -----------------------------------------------------------------------------
+function s:perapera_complete(...)
+  let comp = luaeval("require('perapera.command').complete(unpack(_A))", a:000)
+  return join(comp, "\n")
+endfunction
 
-command -range -nargs=* Perapera
+command -range -nargs=* -complete=custom,s:perapera_complete Perapera
   \ lua require("perapera.command").parse(unpack{<f-args>})
+
+"" Highlights
+" -----------------------------------------------------------------------------
 highlight default link PeraperaTitle Constant
 highlight default link PeraperaLanguagebar Identifier
 

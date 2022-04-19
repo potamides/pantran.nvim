@@ -23,6 +23,15 @@ local command = {
   }
 }
 
+function command.complete(arglead)
+  if arglead:find("=") then
+    local key = arglead:match("(.-)=.*")
+    return vim.tbl_map(function(v) return key .. "=" .. v end, command.flags[key] or {})
+  else
+    return vim.tbl_map(function(v) return v .. "=" end, vim.tbl_keys(command.flags))
+  end
+end
+
 -- recompute coords, since coords of marks could have changed during translation
 function command._marks2coords(marks, delete)
   local start = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks[1], {})
