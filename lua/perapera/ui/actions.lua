@@ -1,6 +1,6 @@
 local async = require("perapera.async")
 local engines = require("perapera.engines")
-local common = require("perapera.ui.actions.common")
+local handlers = require("perapera.handlers")
 local actions = {}
 
 function actions.help()

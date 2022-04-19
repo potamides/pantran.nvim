@@ -1,6 +1,3 @@
---[[
-Common functions of some actions.
---]]
 local common = {}
 
 function common.yank_close(ui, text)
