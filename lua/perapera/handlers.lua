@@ -17,7 +17,8 @@ end
 function handlers.append(text, coords)
   local lines = vim.split(text, "\n", {plain = true})
   if coords then
-    -- TODO: think of a better way to do this
+    -- When appending text always append on a new line since it's not trivial
+    -- how whitespace should be added.
     vim.api.nvim_buf_set_lines(0, coords.erow + 1, coords.erow + 1, true, lines)
   else
     vim.api.nvim_put(lines, "l", true, false)
