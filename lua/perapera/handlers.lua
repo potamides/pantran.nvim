@@ -25,7 +25,8 @@ function handlers.append(text, coords)
 end
 
 function handlers.hover(text)
-  error("Not yet implemented!") -- TODO
+  -- FIXME: prevent translating two times when focusing floating window (i.e. using hover action twice in a row)
+  vim.lsp.util.open_floating_preview(vim.split(text, "\n", {plain = true}), "text", {focus_id = "perapera"})
 end
 
 return handlers
