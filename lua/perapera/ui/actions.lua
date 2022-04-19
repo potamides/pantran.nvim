@@ -8,27 +8,39 @@ function actions.help()
 end
 
 function actions.yank_close_translation(ui)
-  common.yank_close(ui, ui.translation)
+  local translation = ui.translation
+  ui:close()
+  handlers.yank(translation)
 end
 
 function actions.yank_close_input(ui)
-  common.yank_close(ui, ui.input)
+  local input = ui.input
+  ui:close()
+  handlers.yank(input)
 end
 
 function actions.replace_close_translation(ui)
-  common.replace_close(ui, ui.translation)
+  local coords, translation = ui.coords, ui.translation
+  ui:close()
+  handlers.replace(translation, coords)
 end
 
 function actions.replace_close_input(ui)
-  common.replace_close(ui, ui.input)
+  local coords, input = ui.coords, ui.input
+  ui:close()
+  handlers.replace(input, coords)
 end
 
 function actions.append_close_translation(ui)
-  common.append_close(ui, ui.translation)
+  local coords, translation = ui.coords, ui.translation
+  ui:close()
+  handlers.append(translation, coords)
 end
 
 function actions.append_close_input(ui)
-  common.append_close(ui, ui.input)
+  local coords, input = ui.coords, ui.input
+  ui:close()
+  handlers.append(input, coords)
 end
 
 function actions.close(ui)

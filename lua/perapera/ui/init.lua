@@ -174,8 +174,8 @@ function ui.prop.get:input()
   return self._win.input:get_text()
 end
 
-function ui.new(engine, source, target)
-  local coords = ui._compute_win_coords()
+function ui.new(engine, source, target, coords, text)
+  local win_coords = ui._compute_win_coords()
 
   local self = properties.make(setmetatable({
       _engine = engine,
@@ -183,16 +183,18 @@ function ui.new(engine, source, target)
       _target = target or engine.config.default_target,
       _mutex = async.mutex.new(),
       _win = {
-        languagebar = window.new(coords.languagebar),
-        translation = window.new(coords.translation),
-        input = window.new(coords.input)
+        languagebar = window.new(win_coords.languagebar),
+        translation = window.new(win_coords.translation),
+        input = window.new(win_coords.input)
       },
+      coords = coords,
       previous = {} -- store for previous input, source, target, etc.
     }, {__index = ui}))
 
   self._win.input:set_option("scrollbind", self.config.scrollbind)
   self._win.translation:set_option("scrollbind", self.config.scrollbind)
   self.select = selector.new(self._win.languagebar, self._win.input)
+  self._win.input:set_text(text)
   self._win.input:enter()
   controls.setup(self, self._win.input.bufnr, self._win.languagebar.virtnr)
   self:update()
