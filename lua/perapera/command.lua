@@ -3,6 +3,7 @@ local ui = require("perapera.ui")
 local handlers = require("perapera.handlers")
 local async = require("perapera.async")
 local config = require("perapera.config")
+local uapi = require("perapera.utils.api")
 
 local command = {
   namespace = vim.api.nvim_create_namespace("perapera"),
@@ -32,10 +33,18 @@ function command.complete(arglead)
   end
 end
 
--- recompute coords, since coords of marks could have changed during translation
+-- we need to create marks for coords, since coords could change during
+-- non-interactive translations with a large delay
+function command._coords2marks(coords)
+  return {
+    start = vim.api.nvim_buf_set_extmark(0, command.namespace, coords.srow, coords.scol, {}),
+    stop  = vim.api.nvim_buf_set_extmark(0, command.namespace, coords.erow, coords.ecol, {})
+  }
+end
+
 function command._marks2coords(marks, delete)
-  local start = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks[1], {})
-  local stop = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks[2], {})
+  local start = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks.start, {})
+  local stop = vim.api.nvim_buf_get_extmark_by_id(0, command.namespace, marks.stop, {})
 
   if delete then
     for _, mark in pairs(marks) do
@@ -49,6 +58,11 @@ function command._marks2coords(marks, delete)
 end
 
 function command._translate(input, initialize, marks, opts)
+  opts = opts or {}
+  opts.mode = opts.mode or command.config.default_mode
+  opts.engine = opts.engine or "default"
+  opts.source = opts.source or engines[opts.engine].config.default_source
+  opts.target = opts.target or engines[opts.engine].config.default_target
   local engine = engines[opts.engine]
 
   if opts.mode == "interactive" then
@@ -62,21 +76,39 @@ function command._translate(input, initialize, marks, opts)
 end
 
 function command.translate(opts)
-  opts = opts or {}
-  opts.mode = opts.mode or command.config.default_mode
-  opts.engine = opts.engine or "default"
-  opts.source = opts.source or engines[opts.engine].config.default_source
-  opts.target = opts.target or engines[opts.engine].config.default_target
+  local srow, erow, scol, ecol
+  srow, scol = vim.api.nvim_win_get_cursor(0)[1] - 1, 0
+  erow = srow + math.max(0, vim.v.count - 1)
+  ecol = vim.api.nvim_strwidth(vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1]) - 1
 
-  local srow = vim.api.nvim_win_get_cursor(0)[1] - 1
-  local scol, erow, ecol = 0, srow + vim.v.count, -1
-  local input = table.concat(vim.api.nvim_buf_get_lines(0, srow, erow + 1, true), "\n"):sub(scol + 1, ecol)
-  local marks = {
-    vim.api.nvim_buf_set_extmark(0, command.namespace, srow, scol, {}),
-    vim.api.nvim_buf_set_extmark(0, command.namespace, erow, ecol, {})
-  }
-
+  local marks = command._coords2marks{srow = srow, scol = scol, erow = erow, ecol = ecol}
+  local input = table.concat(uapi.nvim_buf_get_text(0, srow, scol, erow + 1, ecol + 1), "\n")
   command._translate(input, vim.v.count > 0, marks, opts)
+end
+
+local _opts, _old_opfunc
+function command.operator(arg)
+  if not arg or type(arg) == "table" then -- see :h :map-operator
+    _opts, _old_opfunc =  arg, vim.opt.operatorfunc
+    vim.opt.operatorfunc = "v:lua.require'perapera.command'.operator"
+    return 'g@'
+  end
+
+  vim.opt.operatorfunc = _old_opfunc
+  local srow, erow, scol, ecol
+
+  if arg == "char" then
+    srow, scol = unpack(vim.api.nvim_buf_get_mark(0, "["))
+    erow, ecol = unpack(vim.api.nvim_buf_get_mark(0, "]"))
+    srow, erow = srow - 1, erow - 1
+  else -- linewise
+    srow, erow = vim.api.nvim_buf_get_mark(0, "[")[1] - 1, vim.api.nvim_buf_get_mark(0, "]")[1] - 1
+    scol, ecol = 0, vim.api.nvim_strwidth(vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1]) - 1
+  end
+
+  local marks = command._coords2marks{srow = srow, scol = scol, erow = erow, ecol = ecol}
+  local input = table.concat(uapi.nvim_buf_get_text(0, srow, scol, erow + 1, ecol + 1), "\n")
+  command._translate(input, true, marks, _opts)
 end
 
 function command.parse(...)
