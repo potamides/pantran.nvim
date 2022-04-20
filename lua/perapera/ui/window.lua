@@ -13,6 +13,7 @@ local window = {
       cursorline     = false,
       cursorcolumn   = false,
       linebreak      = true,
+      breakindent    = true,
       wrap           = true,
       foldcolumn     = "0",
       signcolumn     = "auto",
