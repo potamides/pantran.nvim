@@ -196,6 +196,11 @@ function window:set_option(option, value)
   end
 end
 
+function window:set_keymap(mode, lhs, rhs, opts)
+  vim.api.nvim_buf_set_keymap(self.bufnr, mode, lhs, rhs, opts)
+  vim.api.nvim_buf_set_keymap(self.virtnr, mode, lhs, rhs, opts)
+end
+
 function window:close()
   pcall(vim.api.nvim_buf_delete, self.bufnr, {})
   pcall(vim.api.nvim_buf_delete, self.virtnr, {})
