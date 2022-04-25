@@ -86,17 +86,15 @@ function command.translate(opts)
   command._translate(input, vim.v.count > 0, marks, opts)
 end
 
-local _opts, _old_opfunc
+local _opts
 function command.operator(arg)
   if not arg or type(arg) == "table" then -- see :h :map-operator
-    _opts, _old_opfunc =  arg, vim.opt.operatorfunc
+    _opts = arg
     vim.opt.operatorfunc = "v:lua.require'perapera.command'.operator"
     return 'g@'
   end
 
-  vim.opt.operatorfunc = _old_opfunc
   local srow, erow, scol, ecol
-
   if arg == "char" then
     srow, scol = unpack(vim.api.nvim_buf_get_mark(0, "["))
     erow, ecol = unpack(vim.api.nvim_buf_get_mark(0, "]"))
