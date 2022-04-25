@@ -10,7 +10,8 @@ local api = {}
 function api.nvim_buf_get_text(buffer, start_row, start_col, end_row, end_col)
   local input = vim.api.nvim_buf_get_lines(buffer, start_row, end_row, true)
   if #input > 0 then
-    input[1], input[#input] = input[1]:sub(start_col + 1), input[#input]:sub(1, end_col)
+    input[1] = input[1]:sub(start_col + 1)
+    input[#input] = input[#input]:sub(1, #input > 1 and end_col or end_col - start_col)
   end
   return input
 end

@@ -79,7 +79,7 @@ function command.translate(opts)
   local srow, erow, scol, ecol
   srow, scol = vim.api.nvim_win_get_cursor(0)[1] - 1, 0
   erow = srow + math.max(0, vim.v.count - 1)
-  ecol = vim.api.nvim_strwidth(vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1]) - 1
+  ecol = #vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1] - 1
 
   local marks = command._coords2marks{srow = srow, scol = scol, erow = erow, ecol = ecol}
   local input = table.concat(uapi.nvim_buf_get_text(0, srow, scol, erow + 1, ecol + 1), "\n")
@@ -103,7 +103,7 @@ function command.operator(arg)
     srow, erow = srow - 1, erow - 1
   else -- linewise
     srow, erow = vim.api.nvim_buf_get_mark(0, "[")[1] - 1, vim.api.nvim_buf_get_mark(0, "]")[1] - 1
-    scol, ecol = 0, vim.api.nvim_strwidth(vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1]) - 1
+    scol, ecol = 0, #vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1] - 1
   end
 
   local marks = command._coords2marks{srow = srow, scol = scol, erow = erow, ecol = ecol}
