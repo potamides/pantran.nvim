@@ -16,4 +16,12 @@ function perapera._mt.__index(tbl, key)
   end
 end
 
+function perapera.translate(...)
+  return perapera.command.translate(...)
+end
+
+function perapera.operator(...)
+  return perapera.command.operator(...)
+end
+
 return setmetatable(perapera, perapera._mt)
