@@ -73,6 +73,9 @@ function deepl.setup()
     auth = deepl.config.auth,
     static_paths = {"languages"}
   }
+  if not deepl.config.auth.auth_key then
+    error("This engine requires an API key to work!")
+  end
 end
 
 return config.apply(config.user.engines.deepl, deepl)

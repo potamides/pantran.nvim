@@ -20,8 +20,12 @@ config.apply(
 )
 getmetatable(engines).__index.default = engines[engines.config.default_engine]
 
-for _, engine in pairs(engines) do
-  engine.setup()
+for name, engine in pairs(engines) do
+  if not pcall(engine.setup) then
+    -- when engine isn't properly configured (e.g. no mandatory API key set)
+    -- remove it from the list
+    engines[name] = nil
+  end
 end
 
 return engines
