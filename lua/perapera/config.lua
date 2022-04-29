@@ -17,10 +17,7 @@ function config.set(userconf)
 end
 
 function config.apply(userconf, object)
-  for k, v in pairs(userconf) do
-      object.config[k] = v
-  end
-
+  object.config = vim.tbl_deep_extend("force", object.config, userconf)
   return object
 end
 
