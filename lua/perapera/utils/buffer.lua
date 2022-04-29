@@ -1,3 +1,7 @@
+--[[
+Lua wrappers for vim autocmds and keymaps. Lua APIs where only introduced with
+Neovim 0.7.
+--]]
 local buffer = {
   group = "perapera",
   callbacks = {}
@@ -17,6 +21,10 @@ local function get_next_id(buf)
 end
 
 function buffer.autocmd(buf, args)
+   -- while 0 would theoretically work it could lead to complications during cleanup
+  if buf == 0 then
+    buf = vim.api.nvim_get_current_buf()
+  end
   local events = type(args.events) == "table" and table.concat(args.events, ",") or args.events
   local pattern = ("<buffer=%d>"):format(buf)
   local once = args.once and "++once" or ""
@@ -38,11 +46,28 @@ function buffer.autocmd(buf, args)
 end
 
 function buffer.keymap(buf, args)
-  local id = get_next_id(buf)
-  local rhs = ([[<cmd>lua require("perapera.utils.buffer").callbacks[%d][%d]()<cr>]]):format(buf, id)
+  local id, rhs = get_next_id(buf), args.rhs
 
-  buffer.callbacks[buf][id] = args.rhs
+  if type(args.rhs) == "function" then -- else it's a string
+    rhs = ([[<cmd>lua require("perapera.utils.buffer").callbacks[%d][%d]()<cr>]]):format(buf, id)
+    -- If a description exists we want to get it when converting a function to
+    -- a string. For that matter we use metatable events.
+    buffer.callbacks[buf][id] = setmetatable({}, {
+      __call = args.rhs,
+      __tostring = function() return args.desc or tostring(args.rhs) end
+    })
+  end
+
   vim.api.nvim_buf_set_keymap(buf, args.mode, args.lhs, rhs, args.opts)
+end
+
+function buffer.get_mappings(buf, mode)
+  local mappings = {}
+  for _, mapping in ipairs(vim.api.nvim_buf_get_keymap(buf, mode)) do
+    local id = tonumber(mapping.rhs:match("^.+%[(%d+)%]"))
+    mappings[mapping.lhs] = id and buffer.callbacks[buf][id] or mapping.rhs
+  end
+  return mappings
 end
 
 return buffer
