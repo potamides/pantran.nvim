@@ -21,7 +21,8 @@ function selector:update()
 
   for idx, item in pairs(self:get_matches()) do
     local highlight = idx == self._selected and "PeraperaSelection" or "PeraperaNormal"
-    local prefix = idx == self._selected and self.config.selection_caret or (" "):rep(#self.config.selection_caret)
+    local caret_len = vim.api.nvim_strwidth(self.config.selection_caret)
+    local prefix = idx == self._selected and self.config.selection_caret or (" "):rep(caret_len)
     table.insert(virtual, {{prefix, highlight}, {format(item), highlight}})
   end
 
