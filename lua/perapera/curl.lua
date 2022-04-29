@@ -67,19 +67,27 @@ function curl:_spawn(request, path, data, callback)
 end
 
 function curl:post(path, data)
-  return async.suspend(curl._spawn, self, "POST", path, data or {})
+  local ok, response = async.suspend(curl._spawn, self, "POST", path, data or {})
+  if ok then return response end
+  error(response)
 end
 
 function curl:put(path, data)
-  return async.suspend(curl._spawn, self, "PUT", path, data or {})
+  local ok, response = async.suspend(curl._spawn, self, "PUT", path, data or {})
+  if ok then return response end
+  error(response)
 end
 
-function curl:get(path)
-  return async.suspend(curl._spawn, self, "GET", path, {})
+function curl:get(path, data)
+  local ok, response = async.suspend(curl._spawn, self, "GET", path, data or {})
+  if ok then return response end
+  error(response)
 end
 
-function curl:delete(path)
-  return async.suspend(curl._spawn, self, "DELETE", path, {})
+function curl:delete(path, data)
+  local ok, response = async.suspend(curl._spawn, self, "DELETE", path, data or {})
+  if ok then return response end
+  error(response)
 end
 
 function curl.url(uri)

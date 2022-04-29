@@ -6,6 +6,11 @@ https://luyuhuang.tech/2020/09/13/callback-to-coroutine.html
 local utable = require("perapera.utils.table")
 
 local async = {
+  -- to signal interruption of a coroutine we need a unique
+  -- identifier, which in this case is a table.
+  INTERRUPT = {},
+  -- Mutexes for synchronization between async calls. We need this, as
+  -- callbacks could continue coroutines in any order.
   mutex = {
     _owned = utable.defaulttable({}, true)
   }
@@ -24,23 +29,20 @@ end
 -- callback-style function somewhere in its call stack).
 function async.run(f, ...)
   local co, exec = coroutine.create(f)
-  exec = vim.schedule_wrap(function(continue, ...)
-    if continue then
-      local ok, data = coroutine.resume(co, ...)
-      if not ok then
-        error(debug.traceback(co, data))
-      end
-      if type(data) == "table" then -- the data is a mutex
-        data:push(function() exec(true) end)
-      elseif coroutine.status(co) ~= "dead" then
-        data(exec)
-      end
-    else
-      vim.notify(..., vim.log.levels.ERROR)
+  exec = vim.schedule_wrap(function(...)
+    local ok, data = coroutine.resume(co, ...)
+    if not ok then
       async.mutex.unlock_all(co)
+      error(debug.traceback(co, data))
+    elseif data == async.INTERRUPT then
+      async.mutex.unlock_all(co)
+    elseif type(data) == "table" then -- the data is a mutex
+      data:push(exec)
+    elseif coroutine.status(co) ~= "dead" then
+      data(exec)
     end
   end)
-  exec(true, ...)
+  exec(...)
 end
 
 function async.wrap(f, ...)
@@ -48,6 +50,11 @@ function async.wrap(f, ...)
   return function(...)
     async.run(f, unpack(vim.list_extend(vim.list_slice(args), {...})))
   end
+end
+
+-- Interrupt a running mid-execution.
+function async.interrupt()
+  coroutine.yield(async.INTERRUPT)
 end
 
 function async.mutex:push(func)
