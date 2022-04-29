@@ -12,6 +12,7 @@ local curl = {
 function curl:_spawn(request, path, data, callback)
   local cmd, stdout, response, handle = self.config.cmd, vim.loop.new_pipe(), ""
   local args = {
+    "--fail",
     "--retry", self.config.retry,
     "--max-time", self.config.timeout,
     "--retry-max-time", self.config.timeout,
