@@ -27,7 +27,6 @@ function argos.languages()
     languages.source[lang.code] = lang.name
     languages.target[lang.code] = lang.name
   end
-  argos._languages = languages
 
   return languages
 end
