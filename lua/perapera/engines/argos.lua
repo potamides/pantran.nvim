@@ -41,10 +41,12 @@ function argos.switch(source, target)
 end
 
 function argos.translate(text, source, target)
+  source, target = source or argos.config.default_source, target or argos.config.default_target
+
   local translation = argos._api:post("translate", {
     q = text,
-    source = source or argos.default.source,
-    target = target or argos.default.target
+    source = source,
+    target = target
   })
 
   return {
