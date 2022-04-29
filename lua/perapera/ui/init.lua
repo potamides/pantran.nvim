@@ -93,7 +93,7 @@ end
 function ui:select_left(items, opts, on_choice)
   self.select:set_item_win(self._win.input)
   self.select(items, opts, function(...)
-    self._win.input:enter()
+    self._win.input:enter(true)
     self._win.input:clear_virtual()
     self._win.languagebar:clear_virtual()
     on_choice(...)
@@ -104,7 +104,7 @@ end
 function ui:select_right(items, opts, on_choice)
   self.select:set_item_win(self._win.translation)
   self.select(items, opts, function(...)
-    self._win.input:enter()
+    self._win.input:enter(true)
     self._win.translation:clear_virtual()
     self._win.languagebar:clear_virtual()
     on_choice(...)
@@ -205,12 +205,14 @@ function ui.new(engine, source, target, coords, text)
     callback = function() self:resize() end
   })
 
-  bufutils.autocmd(self._win.input.bufnr, {
-    events = "WinLeave",
-    nested = true,
-    once = true,
-    callback = function() self:close() end
-  })
+  for _, buf in ipairs{self._win.input.bufnr, self._win.languagebar.virtnr} do
+    bufutils.autocmd(buf, {
+      events = "WinLeave",
+      nested = true,
+      once = true,
+      callback = function() self:close() end
+    })
+  end
 
   return self
 end
