@@ -49,14 +49,14 @@ end
 
 actions.switch_languages = async.wrap(function(ui)
   ui:lock()
-  local source, target, detected, new_src, new_tgt = ui.source, ui.target, ui.detected
-  if not detected and ui.previous.source[source] and ui.previous.target[target] then
-    new_src, new_tgt = ui.previous.source[source], ui.previous.target[target]
+  local prv, src, tgt, dtc, new_src, new_tgt = ui.previous, ui.source, ui.target, ui.detected
+  if not dtc and prv.source and prv.source[src] and prv.target and prv.target[tgt] then
+    new_src, new_tgt = prv.source[src], prv.target[tgt]
   else
-    new_src, new_tgt = ui.engine.switch(detected or source, target)
+    new_src, new_tgt = ui.engine.switch(dtc or src, tgt)
   end
 
-  if new_src ~= (detected or source) or ui.target ~= target then
+  if new_src ~= (dtc or src) or ui.target ~= tgt then
     ui.input, ui.translation = ui.translation, ui.input
     ui.source = new_src
     ui.target = new_tgt
@@ -65,8 +65,8 @@ actions.switch_languages = async.wrap(function(ui)
   end
 
   -- put source and target in different tables for the edge case that they are the same
-  ui.previous.source = {[ui.source] = source}
-  ui.previous.target = {[ui.target] = target}
+  prv.source = {[ui.source] = src}
+  prv.target = {[ui.target] = tgt}
   ui:unlock()
 end)
 
