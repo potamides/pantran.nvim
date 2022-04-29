@@ -3,8 +3,9 @@ local config = require("perapera.config")
 
 local deepl = {
   name = "DeepL",
+  url_template = "https://api%s.deepl.com/v2",
   config = {
-    url = "https://api-free.deepl.com/v2",
+    free_api = true,
     auth = {auth_key = vim.env.DEEPL_AUTH_KEY},
     default_source = vim.NIL, -- API will attempt to detect the language automatically
     default_target = "EN-US",
@@ -69,7 +70,7 @@ end
 
 function deepl.setup()
   deepl._api = curl.new{
-    url = deepl.config.url,
+    url = deepl.url_template:format(deepl.config.free_api and "-free" or ""),
     auth = deepl.config.auth,
     static_paths = {"languages"}
   }
