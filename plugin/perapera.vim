@@ -21,13 +21,20 @@ command -range -nargs=* -complete=custom,s:perapera_complete Perapera
 "" Highlights
 " -----------------------------------------------------------------------------
 highlight default link PeraperaTitle Constant
-highlight default link PeraperaLanguagebar Identifier
-
 highlight default link PeraperaNormal Normal
 highlight default link PeraperaBorder PeraperaNormal
 
+" language bar
+highlight default link PeraperaLanguagebar Identifier
+highlight default link PeraperaPromptPrefix Identifier
+highlight default link PeraperaPromptCounter NonText
+
+" select ui
 highlight default link PeraperaSelection Visual
 highlight default link PeraperaSelectionCaret PeraperaSelection
 
-highlight default link PeraperaPromptPrefix Identifier
-highlight default link PeraperaPromptCounter NonText
+" help popup
+highlight default link PeraperaKeymap Special
+highlight default link PeraperaSeparator SpecialKey
+highlight default link PeraperaMode Constant
+highlight default link PeraperaFunction Function

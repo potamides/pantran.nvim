@@ -1,10 +1,11 @@
 local async = require("perapera.async")
 local engines = require("perapera.engines")
 local handlers = require("perapera.handlers")
+local help = require("perapera.ui.help")
 local actions = {}
 
 function actions.help()
-  error("Not implemented!") -- TODO
+  help.toggle()
 end
 
 function actions.yank_close_translation(ui)
