@@ -4,7 +4,7 @@ local config = require("perapera.config")
 local selector = {
   config = {
     prompt_prefix = "> ",
-    selection_caret = "> "
+    selection_caret = "► "
   }
 }
 
