@@ -208,6 +208,7 @@ function window:close()
   if self.title then
     self.title:close()
   end
+  self.closed = true
 end
 
 function window:scroll_to(line)
@@ -256,9 +257,8 @@ function window._create(conf)
 end
 
 function window._safe_call(self, key)
-  local win_valid, buf_valid = vim.api.nvim_win_is_valid, vim.api.nvim_buf_is_valid
   if type(window[key]) == "function" then
-    if not win_valid(self.win_id) or not buf_valid(self.bufnr) or not buf_valid(self.virtnr) then
+    if self.closed then
       return function() return "" end -- FIXME: return function-specific default value
     end
   end
