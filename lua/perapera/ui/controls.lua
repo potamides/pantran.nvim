@@ -89,9 +89,17 @@ function controls.setup(ui, edit_bufnr, select_bufnr)
   for modes, bufnr in zip({mappings.edit, mappings.select}, {edit_bufnr, select_bufnr}) do
     for mode, maps in pairs(modes) do
       for lhs, rhs in pairs(maps) do
-        if rhs then
-          buffer.keymap(bufnr, {mode = mode, lhs = lhs, rhs = function() rhs(ui) end, opts = opts})
-        end
+        if rhs then -- allow users to "unmap" binidngs with [<binding>] = false
+          -- use name of actions as description, if applicable
+          local description = type(rhs) == "string" and rhs or actions[rhs]
+          buffer.keymap(bufnr, {
+            mode = mode,
+            lhs = lhs,
+            rhs = type(rhs) == "string" and rhs or function() rhs(ui) end,
+            desc = description,
+            opts = opts
+        })
+      end
       end
     end
   end

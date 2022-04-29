@@ -145,4 +145,5 @@ function actions.select_last(ui)
   ui.select:last()
 end
 
-return actions
+-- we add reverse lookup so that we can easily get the names of actions
+return vim.tbl_add_reverse_lookup(actions)
