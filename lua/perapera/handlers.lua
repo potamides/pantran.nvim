@@ -8,7 +8,7 @@ end
 function handlers.replace(text, coords)
   local lines = vim.split(text, "\n", {plain = true})
   if coords then
-    vim.api.nvim_buf_set_text(0, coords.srow, coords.scol, coords.erow, coords.ecol, lines)
+    vim.api.nvim_buf_set_text(0, coords.srow, coords.scol, coords.erow, coords.ecol + 1, lines)
   else
     vim.api.nvim_put(lines, "l", true, false)
   end
