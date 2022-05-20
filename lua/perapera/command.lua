@@ -75,7 +75,7 @@ function command._translate(input, initialize, marks, opts)
   end
 end
 
-function command.translate(opts)
+function command.range_translate(opts)
   local srow, erow, scol, ecol
   srow, scol = vim.api.nvim_win_get_cursor(0)[1] - 1, 0
   erow = srow + math.max(0, vim.v.count - 1)
@@ -87,10 +87,10 @@ function command.translate(opts)
 end
 
 local _opts
-function command.operator(arg)
+function command.motion_translate(arg)
   if not arg or type(arg) == "table" then -- see :h :map-operator
     _opts = arg
-    vim.opt.operatorfunc = "v:lua.require'perapera.command'.operator"
+    vim.opt.operatorfunc = "v:lua.require'perapera.command'.motion_translate"
     return 'g@'
   end
 
@@ -119,7 +119,7 @@ function command.parse(...)
     end
   end
 
-  command.translate(opts)
+  command.range_translate(opts)
 end
 
 return config.apply(config.user.command, command)
