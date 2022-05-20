@@ -43,18 +43,30 @@ function async.run(f, ...)
     end
   end)
   exec(...)
+  return co
 end
 
 function async.wrap(f, ...)
   local args = {...}
   return function(...)
-    async.run(f, unpack(vim.list_extend(vim.list_slice(args), {...})))
+    return async.run(f, unpack(vim.list_extend(vim.list_slice(args), {...})))
   end
 end
 
--- Interrupt a running mid-execution.
+-- Interrupt a running coroutine mid-execution.
 function async.interrupt()
   coroutine.yield(async.INTERRUPT)
+end
+
+-- wait on the main thread for coroutines to complete (only useful for scripts)
+function async.join(...)
+  local function still_running(...)
+    local are_dead = vim.tbl_map(function(co) return coroutine.status(co) == "dead" end, {...})
+    return vim.tbl_contains(are_dead, false)
+  end
+  while still_running(...) do
+    vim.wait(250)
+  end
 end
 
 function async.mutex:push(func)
