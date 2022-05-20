@@ -73,10 +73,11 @@ end)
 
 actions.translate = async.wrap(function(ui, force)
   ui:lock()
-  if force or ui.input ~= ui.previous.input then
-    local translated = #ui.input > 0 and ui.engine.translate(ui.input, ui.source, ui.target) or {}
+  local input = ui.input -- we have to save this now for later as user might change text during translation
+  if force or input ~= ui.previous.input then
+    local translated = #input > 0 and ui.engine.translate(input, ui.source, ui.target) or {}
 
-    ui.previous.input = ui.input
+    ui.previous.input = input
     ui.translation = translated.text
     ui.detected = translated.detected
   end
