@@ -1,11 +1,13 @@
-# perapera.nvim
-Perapera.nvim is here to help you use your favorite machine translation
-engines without having to leave your favorite editor. The main focus is on
+# Perapera
+Perapera is here to help you use your favorite machine translation engines
+without having to leave your favorite editor. The main focus is on
 asynchronous, interactive machine translation, similar to what you know from
 various web front-ends, but some non-interactive modes are also supported. If
 you try hard enough it can also be used as an API.
 
-![Demonstration](https://giphy.com/embed/9AIdwhAnzTb7AqHYeC)
+<p align="center">
+  <img src="https://media.giphy.com/media/9AIdwhAnzTb7AqHYeC/giphy.gif" alt="Perapera Demonstration"/>
+</p>
 
 ## Installation
 You need at least [Neovim v0.6+](https://neovim.io/) and
