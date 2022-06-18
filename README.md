@@ -40,20 +40,24 @@ the [documentation](doc/) for more details. If you plan to translate
 frequently, the command can also be mapped to these recommended keybindings:
 
 <details open><summary>Neovim 0.7+</summary>
+
 ```lua
 local opts = {noremap = true, silent = true}
 vim.keymap.set("n", "<leader>tr", perapera.motion_translate, opts)
 vim.keymap.set("n", "<leader>trr", function() return perapera.motion_translate() .. "_" end, opts)
 vim.keymap.set("x", "<leader>tr", perapera.motion_translate, opts)
 ```
+
 </details>
 <details><summary>Neovim 0.6</summary>
+
 ```lua
 local opts = {noremap = true, silent = true}
 vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('perapera').motion_translate()")]], opts)
 vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('perapera').motion_translate() .. '_'")]], opts)
 vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('perapera').motion_translate()")]], opts)
 ```
+
 </details>
 
 Like the command above this allows you to use ranges, for example you can use
