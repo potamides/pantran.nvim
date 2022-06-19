@@ -33,7 +33,7 @@ use {
 
 ## Quickstart
 Run the command `:Pera<cr>` to open an interactive translation window and start
-typing to see what happens! Type `g?` in normal mode or `i_CTRL-@` in insert
+typing to see what happens! Type `g?` in normal mode or `i_CTRL-/` in insert
 mode to open a help buffer with available keybindings. `Pera` also supports
 ranges and optional flags for configuration of the translation process. Consult
 the [documentation](doc/) for more details. If you plan to translate
