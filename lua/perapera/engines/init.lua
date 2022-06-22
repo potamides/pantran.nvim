@@ -2,8 +2,9 @@ local config = require("perapera.config")
 local utable = require("perapera.utils.table")
 
 local engines = {
-  argos = require("perapera.engines.argos"),
-  deepl = require("perapera.engines.deepl"),
+  apertium = require("perapera.engines.apertium"),
+  argos  = require("perapera.engines.argos"),
+  deepl  = require("perapera.engines.deepl"),
   _mt = {
     __index = {
       -- set config in metatable to hide it when iterating engines in main table
