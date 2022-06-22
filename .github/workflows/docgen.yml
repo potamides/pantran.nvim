@@ -3,6 +3,9 @@ name: Generate Vim help files
 on:
   push:
     branches: [main]
+    paths:
+      - 'README.md'
+      - 'doc/README.md'
 
 jobs:
   vimdocgen:
