@@ -7,7 +7,6 @@ Table of Contents                                 *perapera-table-of-contents*
   - Quickstart                                           |perapera-quickstart|
   - Supported Engines                             |perapera-supported-engines|
   - Configuration                                     |perapera-configuration|
-  - TODO                                                       |perapera-todo|
 2. Documentation                                      |perapera-documentation|
 
 ==============================================================================
@@ -132,29 +131,6 @@ are listed below. The invocation of `require("perapera").setup()` is optional.
       }
     }
 <
-
-
-TODO                                                           *perapera-todo*
-
-
-- ☐ Documentation
-    - ☐ warning sentence splitting newline
-    - ☐ engines disable automatically
-- ☒ option to deactivate engines (automatically through errors)
-- ☐ google, apertium & yandex engines
-    <https://github.com/Animenosekai/translat>
-- ☒ help window
-- ☐ docstrings
-- ☐ formatter/linter
-- ☐ tests
-- ☐ ci (github actions)
-- ☐ health check (e.g. if curl is installed)
-- ☒ Figure out good way to configuration
-- ☒ message ordering of async curl requests (implemented as mutexes)
-- ☒ interactive select menu
-- ☒ conventional commits
-- ☒ actions: rename window to ui
-- ☒ operatorfunc
 
 
 ==============================================================================
