@@ -199,13 +199,12 @@ function ui.new(engine, source, target, coords, text)
   controls.setup(self, self._win.input.bufnr, self._win.languagebar.virtnr)
   self:update()
 
-  bufutils.autocmd(self._win.input.bufnr, {
-    events = "VimResized",
-    nested = true,
-    callback = function() self:resize() end
-  })
-
   for _, buf in ipairs{self._win.input.bufnr, self._win.languagebar.virtnr} do
+    bufutils.autocmd(buf, {
+      events = "VimResized",
+      nested = true,
+      callback = function() self:resize() end
+    })
     bufutils.autocmd(buf, {
       events = "WinLeave",
       nested = true,
