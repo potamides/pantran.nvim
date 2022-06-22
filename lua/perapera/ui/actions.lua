@@ -2,6 +2,7 @@ local async = require("perapera.async")
 local engines = require("perapera.engines")
 local handlers = require("perapera.handlers")
 local help = require("perapera.ui.help")
+local protected = require("perapera.utils.protected")
 local actions = {}
 
 function actions.help()
@@ -113,7 +114,7 @@ actions.select_engine = async.wrap(function(ui)
   ui:select_left(vim.tbl_map(function(v) return v.name end, engines), nil, function(name)
     local engine = vim.tbl_filter(function(v) return v.name == name end, engines)[1]
     if engine then
-      ui.engine = engine
+      ui.engine = protected.wrap(engine)
       ui.source = engine.config.default_source
       ui.target = engine.config.default_target
       ui.detected = nil

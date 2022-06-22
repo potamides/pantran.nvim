@@ -4,6 +4,7 @@ local handlers = require("perapera.handlers")
 local async = require("perapera.async")
 local config = require("perapera.config")
 local uapi = require("perapera.utils.api")
+local protected = require("perapera.utils.protected")
 
 local command = {
   namespace = vim.api.nvim_create_namespace("perapera"),
@@ -63,7 +64,7 @@ function command._translate(input, initialize, marks, opts)
   opts.engine = opts.engine or "default"
   opts.source = opts.source or engines[opts.engine].config.default_source
   opts.target = opts.target or engines[opts.engine].config.default_target
-  local engine = engines[opts.engine]
+  local engine = protected.wrap(engines[opts.engine])
 
   if opts.mode == "interactive" then
     ui.new(engine, opts.source, opts.target, command._marks2coords(marks, true), initialize and input)
