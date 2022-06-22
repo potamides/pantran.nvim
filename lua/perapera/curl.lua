@@ -26,6 +26,11 @@ function curl:_spawn(request, path, data, callback)
     table.insert(args, 1, "--data-urlencode")
   end
 
+  for key, value in pairs(self._headers) do
+    table.insert(args, 1, ("%s: %s"):format(key, value))
+    table.insert(args, 1, "--header")
+  end
+
   if self._cache[table.concat(args)] then
     callback(true, self._cache[table.concat(args)])
     return
@@ -109,6 +114,7 @@ function curl.new(args)
   local self = {
     _url = curl.url(args.url),
     _auth = args.auth or {},
+    _headers = args.headers or {},
     _static_paths = args.static_paths or {},
     _cache = {}
   }
