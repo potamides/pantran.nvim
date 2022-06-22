@@ -57,6 +57,7 @@ end
 function argos.setup()
   argos._api = curl.new{
     url = argos.config.url,
+    fmt_error = function(response) return response.error end,
     data = {api_key = argos.config.api_key},
     static_paths = {"languages"}
   }

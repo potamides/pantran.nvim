@@ -71,6 +71,7 @@ end
 function deepl.setup()
   deepl._api = curl.new{
     url = deepl.url_template:format(deepl.config.free_api and "-free" or ""),
+    fmt_error = function(response) return response.message end,
     data = {auth_key = deepl.config.auth_key},
     static_paths = {"languages"}
   }
