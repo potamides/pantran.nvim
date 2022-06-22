@@ -1,0 +1,21 @@
+name: Generate Vim help files
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  vimdocgen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: panvimdoc
+        uses: kdheepak/panvimdoc@main
+        with:
+          vimdoc: perapera
+          pandoc: README.md doc/README.md
+          version: NVIM v0.6+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'docs: auto generate help files'
+          branch: ${{ github.head_ref }}
