@@ -5,6 +5,7 @@ local engines = {
   apertium = require("perapera.engines.apertium"),
   argos  = require("perapera.engines.argos"),
   deepl  = require("perapera.engines.deepl"),
+  yandex = require("perapera.engines.yandex"),
   _mt = {
     __index = {
       -- set config in metatable to hide it when iterating engines in main table
