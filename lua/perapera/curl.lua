@@ -12,7 +12,7 @@ local curl = {
 function curl:_spawn(request, path, data, callback)
   local cmd, stdout, response, handle = self.config.cmd, vim.loop.new_pipe(), ""
   local args = {
-    "--fail",
+    "--fail-with-body",
     "--retry", self.config.retry,
     "--max-time", self.config.timeout,
     "--retry-max-time", self.config.timeout,
@@ -41,10 +41,14 @@ function curl:_spawn(request, path, data, callback)
       stdio = {nil, stdout, nil}
     },
     vim.schedule_wrap(function(code) -- on exit
+      local ok, decoded = pcall(vim.fn.json_decode, response)
       if code ~= 0 then
-        callback(false, ("%q exited with error code %d!"):format(cmd, code))
+        if ok then
+          callback(false, self._fmt_error(decoded))
+        else
+          callback(false, ("%q exited with error code %d!"):format(cmd, code))
+        end
       elseif callback then
-        local ok, decoded = pcall(vim.fn.json_decode, response)
         if ok then
           if vim.tbl_contains(self._static_paths, path) then
             self._cache[table.concat(args)] = decoded
@@ -74,25 +78,25 @@ end
 function curl:post(path, data)
   local ok, response = async.suspend(curl._spawn, self, "POST", path, data or {})
   if ok then return response end
-  error(response)
+  error(response, 0)
 end
 
 function curl:put(path, data)
   local ok, response = async.suspend(curl._spawn, self, "PUT", path, data or {})
   if ok then return response end
-  error(response)
+  error(response, 0)
 end
 
 function curl:get(path, data)
   local ok, response = async.suspend(curl._spawn, self, "GET", path, data or {})
   if ok then return response end
-  error(response)
+  error(response, 0)
 end
 
 function curl:delete(path, data)
   local ok, response = async.suspend(curl._spawn, self, "DELETE", path, data or {})
   if ok then return response end
-  error(response)
+  error(response, 0)
 end
 
 function curl.url(uri)
@@ -116,6 +120,7 @@ function curl.new(args)
     _auth = args.auth or {},
     _headers = args.headers or {},
     _static_paths = args.static_paths or {},
+    _fmt_error = args.fmt_error or function(rsp) return tostring(rsp) end,
     _cache = {}
   }
 
