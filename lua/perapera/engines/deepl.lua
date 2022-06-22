@@ -6,7 +6,7 @@ local deepl = {
   url_template = "https://api%s.deepl.com/v2",
   config = {
     free_api = true,
-    auth = {auth_key = vim.env.DEEPL_AUTH_KEY},
+    auth_key = vim.env.DEEPL_AUTH_KEY,
     default_source = vim.NIL, -- API will attempt to detect the language automatically
     default_target = "EN-US",
     split_sentences = 1,
@@ -71,10 +71,10 @@ end
 function deepl.setup()
   deepl._api = curl.new{
     url = deepl.url_template:format(deepl.config.free_api and "-free" or ""),
-    auth = deepl.config.auth,
+    data = {auth_key = deepl.config.auth_key},
     static_paths = {"languages"}
   }
-  if not deepl.config.auth.auth_key then
+  if not deepl.config.auth_key then
     error("This engine requires an API key to work!")
   end
 end

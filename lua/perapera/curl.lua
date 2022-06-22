@@ -21,7 +21,7 @@ function curl:_spawn(request, path, data, callback)
     tostring(self._url / path)
   }
 
-  for key, value in pairs(vim.tbl_extend("error", self._auth, data)) do
+  for key, value in pairs(vim.tbl_extend("error", self._data, data)) do
     table.insert(args, 1, ("%s=%s"):format(key, value))
     table.insert(args, 1, "--data-urlencode")
   end
@@ -117,7 +117,7 @@ end
 function curl.new(args)
   local self = {
     _url = curl.url(args.url),
-    _auth = args.auth or {},
+    _data = args.data or {},
     _headers = args.headers or {},
     _static_paths = args.static_paths or {},
     _fmt_error = args.fmt_error or function(rsp) return tostring(rsp) end,

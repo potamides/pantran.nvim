@@ -5,7 +5,7 @@ local argos = {
   name = "Argos Translate",
   config = {
     url = "https://translate.argosopentech.com",
-    auth = {api_key = vim.NIL}, -- optional for many libretranslate instances
+    api_key = vim.NIL, -- optional for many libretranslate instances
     default_source = "auto",
     default_target = "en"
   }
@@ -57,7 +57,7 @@ end
 function argos.setup()
   argos._api = curl.new{
     url = argos.config.url,
-    auth = argos.config.auth,
+    data = {api_key = argos.config.api_key},
     static_paths = {"languages"}
   }
 end
