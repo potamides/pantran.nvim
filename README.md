@@ -155,23 +155,3 @@ require("perapera").setup{
   }
 }
 ```
-
-## TODO
-- [ ] Documentation
-  - [ ] warning sentence splitting newline
-  - [ ] engines disable automatically
-- [x] option to deactivate engines (automatically through errors)
-- [ ] google, apertium & yandex engines (https://github.com/Animenosekai/translate)
-- [x] help window
-
-- [ ] docstrings
-- [ ] formatter/linter
-- [ ] tests
-- [ ] ci (github actions)
-- [ ] health check (e.g. if curl is installed)
-- [x] Figure out good way to configuration
-- [x] message ordering of async curl requests (implemented as mutexes)
-- [x] interactive select menu
-- [x] conventional commits
-- [x] actions: rename window to ui
-- [x] operatorfunc
