@@ -5,7 +5,7 @@ local curl = {
   config = {
     cmd = "curl",
     retry = 3,
-    timeout = 10
+    timeout = 15
   }
 }
 
