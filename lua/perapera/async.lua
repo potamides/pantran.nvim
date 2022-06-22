@@ -54,7 +54,10 @@ function async.wrap(f, ...)
 end
 
 -- Interrupt a running coroutine mid-execution.
-function async.interrupt()
+function async.interrupt(msg, level)
+  if msg then
+    vim.notify(msg, level or vim.log.levels.ERROR)
+  end
   coroutine.yield(async.INTERRUPT)
 end
 
