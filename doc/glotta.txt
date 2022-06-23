@@ -1,0 +1,170 @@
+*glotta.txt*              For NVIM v0.6+             Last change: 2022 June 23
+
+==============================================================================
+Table of Contents                                   *glotta-table-of-contents*
+
+1. Glotta.nvim                                            |glotta-glotta.nvim|
+  - Quickstart                                             |glotta-quickstart|
+  - Supported Engines                               |glotta-supported-engines|
+  - Configuration                                       |glotta-configuration|
+  - TODO                                                         |glotta-todo|
+2. Documentation                                        |glotta-documentation|
+
+==============================================================================
+1. Glotta.nvim                                            *glotta-glotta.nvim*
+
+With glotta.nvim, you can use your favorite machine translation engines without
+having to leave your favorite editor. It makes use of Neovim’s |api-floatwin|
+to implement an asynchronous, interactive machine translation interface,
+similar to how most of the various machine translation web font-ends work. In
+addition to that, other (non-interactive) modes are also supported and if you
+try hard enough, glotta.nvim can also be used as an API. In other words, this
+plugin is here to help you deal with any γλῶττᾰ
+<https://en.wiktionary.org/wiki/γλῶσσα#Ancient_Greek> with the power of
+Neovim.
+
+QUICKSTART                                                 *glotta-quickstart*
+
+Run the command `:Glotta<cr>` to open an interactive translation window and
+start typing to get an understanding of how things work. Type `g?` in normal
+mode or `i_CTRL-/` in insert mode to open a help buffer with available
+keybindings. `Glotta` also supports command ranges to initialize the
+translation winodw. Further, some optional flags for configuration of the
+translation process are available. If you plan to translate frequently, the
+command can also be mapped to the following recommended keybindings:
+
+Neovim 0.7+
+
+>
+    local opts = {noremap = true, silent = true}
+    vim.keymap.set("n", "<leader>tr", glotta.motion_translate, opts)
+    vim.keymap.set("n", "<leader>trr", function() return glotta.motion_translate() .. "_" end, opts)
+    vim.keymap.set("x", "<leader>tr", glotta.motion_translate, opts)
+<
+
+
+Neovim 0.6
+
+>
+    local opts = {noremap = true, silent = true}
+    vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
+    vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('glotta').motion_translate() .. '_'")]], opts)
+    vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
+<
+
+
+The mappings work similarly to the command in that they also allow you to use
+ranges. E.g., you can use `3<leader>trr` to populate the translation window
+with the next three lines of text. One advantage over the command, however, is
+the additional support for |text objects|. You can use `<leader>tris` or
+`<leader>trip` to translate the surrounding sentence or paragraph, for example.
+Other translation modes like replacing or appending text immediately without
+opening an interactive window are also implemented.
+
+SUPPORTED ENGINES                                   *glotta-supported-engines*
+
+The plugin already supports a few different translation engines. If you have
+any further suggestions feel free to open an issue
+<https://github.com/potamides/glotta.nvim/issues> or pull request
+<https://github.com/potamides/glotta.nvim/pulls>! The currently supported
+engines are as follows:
+
+
+- Apertium <https://apertium.org>
+- Argos Translate <https://translate.argosopentech.com>
+- DeepL <https://www.deepl.com/translator>
+- Google Translate <https://translate.google.com> (WIP)
+- Yandex Translate <https://translate.yandex.com>
+
+
+Some of these engines are free and open-source and can be used right off the
+bat. However, some are commercial and might require additional setup steps. For
+stability reasons, the philosophy of this plugin is to prioritize official API
+endpoints for which commercial engines usually require some means of
+authentication, e.g., through an API key. If no such key is configured but free
+alternative endpoints exist, these are used as fallback options. Note, however,
+that these are usually severely rate-limited
+<https://github.com/soimort/translate-shell/issues/370> and in some instances
+produce inferior translations
+<https://github.com/Animenosekai/translate/issues/22>. So if you want to use a
+commercial engine, configuring authentication is usually recommended.
+
+CONFIGURATION                                           *glotta-configuration*
+
+Glotta.nvim supports a wide range of configuration options. Some essential ones
+are listed below. The invocation of `require("glotta").setup()` is optional.
+
+>
+    require("glotta").setup{
+      engines = {
+        -- Configuration for individual engines goes here. To list available engine
+        -- identifiers run `:lua =vim.tbl_keys(require("glotta.engines"))`)
+        default_engine = "argos"
+        yandex = {
+          -- Default languages can be defined on a per engine basis. In this case
+          -- `:lua =require("glotta.async").run(function()
+          -- vim.pretty_print(require("glotta.engines").yandex:languages()) end)`
+          -- can be used to list available language identifiers.
+          default_source = "auto",
+          default_target = "en"
+        },
+      },
+      controls = {
+        mappings = {
+          edit = {
+            n = {
+              -- Use this table to add additional mappings for the normal mode in
+              -- the translation window. Either strings or function references are
+              -- supported.
+              ["j"] = "gj",
+              ["k"] = "gk"
+            }
+            i = {
+              -- Similar table but for insert mode. Using 'false' disables existing
+              -- keybindings.
+              ["<C-y>"] = false,
+              ["<C-a>"] = package.loaded.glotta.ui.actions.yank_close_translation
+            }
+          },
+          select = {
+            n = {
+              -- Keybindings here are used in the selection window.
+            }
+          }
+        }
+      }
+    }
+<
+
+
+TODO                                                             *glotta-todo*
+
+
+- ☐ Documentation
+    - ☐ warning sentence splitting newline
+    - ☐ engines disable automatically
+- ☒ option to deactivate engines (automatically through errors)
+- ☐ google, apertium & yandex engines
+    <https://github.com/Animenosekai/translat>
+- ☒ help window
+- ☐ docstrings
+- ☐ formatter/linter
+- ☐ tests
+- ☐ ci (github actions)
+- ☐ health check (e.g. if curl is installed)
+- ☒ Figure out good way to configuration
+- ☒ message ordering of async curl requests (implemented as mutexes)
+- ☒ interactive select menu
+- ☒ conventional commits
+- ☒ actions: rename window to ui
+- ☒ operatorfunc
+
+
+==============================================================================
+2. Documentation                                        *glotta-documentation*
+
+WIP
+
+Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
+
+vim:tw=78:ts=8:noet:ft=help:norl:
