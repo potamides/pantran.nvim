@@ -1,5 +1,5 @@
-local curl = require("perapera.curl")
-local config = require("perapera.config")
+local curl = require("glotta.curl")
+local config = require("glotta.config")
 
 -- API reference: https://wiki.apertium.org/wiki/Apertium-apy
 local apertium = {

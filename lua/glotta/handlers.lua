@@ -28,7 +28,7 @@ end
 function handlers.hover(text)
   if #text ~= 0  then
     -- FIXME: prevent translating two times when focusing floating window (i.e. using hover action twice in a row)
-    vim.lsp.util.open_floating_preview(vim.split(text, "\n", {plain = true}), "text", {focus_id = "perapera"})
+    vim.lsp.util.open_floating_preview(vim.split(text, "\n", {plain = true}), "text", {focus_id = "glotta"})
   end
 end
 

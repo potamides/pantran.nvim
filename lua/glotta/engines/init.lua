@@ -1,11 +1,11 @@
-local config = require("perapera.config")
-local utable = require("perapera.utils.table")
+local config = require("glotta.config")
+local utable = require("glotta.utils.table")
 
 local engines = {
-  apertium = require("perapera.engines.apertium"),
-  argos  = require("perapera.engines.argos"),
-  deepl  = require("perapera.engines.deepl"),
-  yandex = require("perapera.engines.yandex"),
+  apertium = require("glotta.engines.apertium"),
+  argos  = require("glotta.engines.argos"),
+  deepl  = require("glotta.engines.deepl"),
+  yandex = require("glotta.engines.yandex"),
   _mt = {
     __index = {
       -- set config in metatable to hide it when iterating engines in main table

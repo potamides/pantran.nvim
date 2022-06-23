@@ -3,7 +3,7 @@ Lua wrappers for vim autocmds and keymaps. Lua APIs where only introduced with
 Neovim 0.7.
 --]]
 local buffer = {
-  group = "perapera",
+  group = "glotta",
   callbacks = {}
 }
 
@@ -12,7 +12,7 @@ local function get_next_id(buf)
     buffer.callbacks[buf] = {}
     vim.cmd(([[
       augroup %s
-        autocmd BufWipeout <buffer=%d> ++once :lua require("perapera.utils.buffer").callbacks[%d] = nil
+        autocmd BufWipeout <buffer=%d> ++once :lua require("glotta.utils.buffer").callbacks[%d] = nil
       augroup END
     ]]):format(buffer.group, buf, buf))
   end
@@ -40,7 +40,7 @@ function buffer.autocmd(buf, args)
 
   vim.cmd(([[
     augroup %s
-      autocmd %s %s %s %s :lua require("perapera.utils.buffer").callbacks[%d][%d]()
+      autocmd %s %s %s %s :lua require("glotta.utils.buffer").callbacks[%d][%d]()
     augroup END
   ]]):format(buffer.group, events, pattern, once, nested, buf, id))
 end
@@ -49,7 +49,7 @@ function buffer.keymap(buf, args)
   local id, rhs = get_next_id(buf), args.rhs
 
   if type(args.rhs) == "function" then -- else it's a string
-    rhs = ([[<cmd>lua require("perapera.utils.buffer").callbacks[%d][%d]()<cr>]]):format(buf, id)
+    rhs = ([[<cmd>lua require("glotta.utils.buffer").callbacks[%d][%d]()<cr>]]):format(buf, id)
     -- If a description exists we want to get it when converting a function to
     -- a string. For that matter we use metatable events.
     buffer.callbacks[buf][id] = setmetatable({}, {

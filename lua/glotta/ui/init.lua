@@ -1,10 +1,10 @@
-local controls = require("perapera.ui.controls")
-local window = require("perapera.ui.window")
-local selector = require("perapera.ui.select")
-local async = require("perapera.async")
-local config = require("perapera.config")
-local properties = require("perapera.utils.properties")
-local bufutils = require("perapera.utils.buffer")
+local controls = require("glotta.ui.controls")
+local window = require("glotta.ui.window")
+local selector = require("glotta.ui.select")
+local async = require("glotta.async")
+local config = require("glotta.config")
+local properties = require("glotta.utils.properties")
+local bufutils = require("glotta.utils.buffer")
 
 local ui = {
   config = {
@@ -75,14 +75,14 @@ function ui:update()
 
     if source then
       self._win.languagebar:set_virtual{
-        left = {{{source, "PeraperaLanguagebar"}, detected and {detected, "PeraperaLanguagebar"} or nil}},
+        left = {{{source, "GlottaLanguagebar"}, detected and {detected, "GlottaLanguagebar"} or nil}},
         separator = " ",
         margin = " "
       }
     end
     if target then
       self._win.languagebar:set_virtual{
-        right = {{{target, "PeraperaLanguagebar"}}},
+        right = {{{target, "GlottaLanguagebar"}}},
         margin = " ",
       }
     end

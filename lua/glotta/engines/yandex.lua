@@ -1,6 +1,6 @@
-local curl = require("perapera.curl")
-local config = require("perapera.config")
-local fallback = require("perapera.engines.fallback.yandex")
+local curl = require("glotta.curl")
+local config = require("glotta.config")
+local fallback = require("glotta.engines.fallback.yandex")
 
 -- implementation based on https://github.com/Animenosekai/translate
 local yandex = {

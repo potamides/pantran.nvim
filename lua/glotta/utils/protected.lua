@@ -1,4 +1,4 @@
-local async = require("perapera.async")
+local async = require("glotta.async")
 
 local protected = {}
 

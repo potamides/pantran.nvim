@@ -1,13 +1,13 @@
-local engines = require("perapera.engines")
-local ui = require("perapera.ui")
-local handlers = require("perapera.handlers")
-local async = require("perapera.async")
-local config = require("perapera.config")
-local uapi = require("perapera.utils.api")
-local protected = require("perapera.utils.protected")
+local engines = require("glotta.engines")
+local ui = require("glotta.ui")
+local handlers = require("glotta.handlers")
+local async = require("glotta.async")
+local config = require("glotta.config")
+local uapi = require("glotta.utils.api")
+local protected = require("glotta.utils.protected")
 
 local command = {
-  namespace = vim.api.nvim_create_namespace("perapera"),
+  namespace = vim.api.nvim_create_namespace("glotta"),
   config = {
     default_mode = "interactive"
   },
@@ -91,7 +91,7 @@ local _opts
 function command.motion_translate(arg)
   if not arg or type(arg) == "table" then -- see :h :map-operator
     _opts = arg
-    vim.opt.operatorfunc = "v:lua.require'perapera.command'.motion_translate"
+    vim.opt.operatorfunc = "v:lua.require'glotta.command'.motion_translate"
     return 'g@'
   end
 

@@ -1,5 +1,5 @@
-local bufutils = require("perapera.utils.buffer")
-local config = require("perapera.config")
+local bufutils = require("glotta.utils.buffer")
+local config = require("glotta.config")
 
 local selector = {
   config = {
@@ -20,7 +20,7 @@ function selector:update()
   local virtual, format = {}, self._opts.format_item
 
   for idx, item in pairs(self:get_matches()) do
-    local highlight = idx == self._selected and "PeraperaSelection" or "PeraperaNormal"
+    local highlight = idx == self._selected and "GlottaSelection" or "GlottaNormal"
     local caret_len = vim.api.nvim_strwidth(self.config.selection_caret)
     local prefix = idx == self._selected and self.config.selection_caret or (" "):rep(caret_len)
     table.insert(virtual, {{prefix, highlight}, {format(item), highlight}})
@@ -30,8 +30,8 @@ function selector:update()
   self._item_win:scroll_to(self._selected)
   self._item_win:set_virtual{left = virtual, hl_eol = true}
   self._edit_win:set_virtual{
-    left = {{{self.config.prompt_prefix, "PeraperaPromptPrefix"}}},
-    right = {{{("%d / %d"):format(#virtual, #self._items), "PeraperaPromptCounter"}}},
+    left = {{{self.config.prompt_prefix, "GlottaPromptPrefix"}}},
+    right = {{{("%d / %d"):format(#virtual, #self._items), "GlottaPromptCounter"}}},
     displace = true, nomodify = true
   }
 end

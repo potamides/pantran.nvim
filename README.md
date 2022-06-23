@@ -1,15 +1,15 @@
-# Perapera
-Perapera is here to help you use your favorite machine translation engines
+# Glotta
+Glotta is here to help you use your favorite machine translation engines
 without having to leave your favorite editor. It makes use of Neovim's
 [api-floatwin](https://neovim.io/doc/user/api.html#api-floatwin) to implement
 an asynchronous, interactive machine translation interface, similar to how most
 of the various machine translation web font-ends work. In addition to that,
 other (non-interactive) modes are also supported. If you try hard enough,
-Perapera can also be used as an API.
+Glotta can also be used as an API.
 
 <!-- panvimdoc-ignore-start -->
 <p align="center">
-  <img src="https://media.giphy.com/media/9AIdwhAnzTb7AqHYeC/giphy.gif" alt="Perapera Demonstration"/>
+  <img src="https://media.giphy.com/media/9AIdwhAnzTb7AqHYeC/giphy.gif" alt="Glotta Demonstration"/>
 </p>
 
 ## Installation
@@ -19,29 +19,29 @@ using your favorite plugin manager.
 
 With [vim-plug](https://github.com/junegunn/vim-plug):
 ```viml
-Plug "potamides/perapera.nvim"
+Plug "potamides/glotta.nvim"
 ```
 
 With [dein](https://github.com/Shougo/dein.vim):
 ```viml
-call dein#add("potamides/perapera.nvim")
+call dein#add("potamides/glotta.nvim")
 ```
 
 With [packer.nvim](https://github.com/wbthomason/packer.nvim):
 ```lua
 use {
-  "potamides/perapera.nvim"
+  "potamides/glotta.nvim"
 }
 ```
 <!-- panvimdoc-ignore-end -->
 
 ## Quickstart
-Run the command `:Pera<cr>` to open an interactive translation window and start
-typing to get an understanding of how things work. Type `g?` in normal mode or
-`i_CTRL-/` in insert mode to open a help buffer with available keybindings.
-`Pera` also supports command ranges to initialize the translation winodw.
-Further, some optional flags for configuration of the translation process are
-available<!-- panvimdoc-ignore-start -->, consult the
+Run the command `:Glotta<cr>` to open an interactive translation window and
+start typing to get an understanding of how things work. Type `g?` in normal
+mode or `i_CTRL-/` in insert mode to open a help buffer with available
+keybindings. `Glotta` also supports command ranges to initialize the
+translation winodw. Further, some optional flags for configuration of the
+translation process are available<!-- panvimdoc-ignore-start -->, consult the
 [documentation](doc/README.md) for more details<!-- panvimdoc-ignore-end -->.
 If you plan to translate frequently, the command can also be mapped to the
 following recommended keybindings:
@@ -53,9 +53,9 @@ following recommended keybindings:
 
 ```lua
 local opts = {noremap = true, silent = true}
-vim.keymap.set("n", "<leader>tr", perapera.motion_translate, opts)
-vim.keymap.set("n", "<leader>trr", function() return perapera.motion_translate() .. "_" end, opts)
-vim.keymap.set("x", "<leader>tr", perapera.motion_translate, opts)
+vim.keymap.set("n", "<leader>tr", glotta.motion_translate, opts)
+vim.keymap.set("n", "<leader>trr", function() return glotta.motion_translate() .. "_" end, opts)
+vim.keymap.set("x", "<leader>tr", glotta.motion_translate, opts)
 ```
 
 </details>
@@ -63,9 +63,9 @@ vim.keymap.set("x", "<leader>tr", perapera.motion_translate, opts)
 
 ```lua
 local opts = {noremap = true, silent = true}
-vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('perapera').motion_translate()")]], opts)
-vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('perapera').motion_translate() .. '_'")]], opts)
-vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('perapera').motion_translate()")]], opts)
+vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
+vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('glotta').motion_translate() .. '_'")]], opts)
+vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
 ```
 
 </details>
@@ -84,8 +84,8 @@ implemented.<!-- panvimdoc-ignore-start --> Again, consult the
 ## Supported Engines
 The plugin already supports a few different translation engines. If
 you have any further suggestions feel free to open an
-[issue](https://github.com/potamides/perapera.nvim/issues) or [pull
-request](https://github.com/potamides/perapera.nvim/pulls)! The currently
+[issue](https://github.com/potamides/glotta.nvim/issues) or [pull
+request](https://github.com/potamides/glotta.nvim/pulls)! The currently
 supported engines are as follows:
 
 * [Apertium](https://apertium.org)
@@ -109,21 +109,21 @@ recommended<!-- panvimdoc-ignore-start --> (see the [docs](doc/README.md) for
 more information)<!-- panvimdoc-ignore-end -->.
 
 ## Configuration
-Perapera supports a wide range of configuration options. Some essential ones
+Glotta supports a wide range of configuration options. Some essential ones
 are listed below<!-- panvimdoc-ignore-start -->, for a full list consult the
 additional [documentation](doc/README.md)<!-- panvimdoc-ignore-end -->. The
-invocation of `require("perapera").setup()` is optional.
+invocation of `require("glotta").setup()` is optional.
 
 ```lua
-require("perapera").setup{
+require("glotta").setup{
   engines = {
     -- Configuration for individual engines goes here. To list available engine
-    -- identifiers run `:lua =vim.tbl_keys(require("perapera.engines"))`)
+    -- identifiers run `:lua =vim.tbl_keys(require("glotta.engines"))`)
     default_engine = "argos"
     yandex = {
       -- Default languages can be defined on a per engine basis. In this case
-      -- `:lua =require("perapera.async").run(function()
-      -- vim.pretty_print(require("perapera.engines").yandex:languages()) end)`
+      -- `:lua =require("glotta.async").run(function()
+      -- vim.pretty_print(require("glotta.engines").yandex:languages()) end)`
       -- can be used to list available language identifiers.
       default_source = "auto",
       default_target = "en"
@@ -143,7 +143,7 @@ require("perapera").setup{
           -- Similar table but for insert mode. Using 'false' disables existing
           -- keybindings.
           ["<C-y>"] = false,
-          ["<C-a>"] = package.loaded.perapera.ui.actions.yank_close_translation
+          ["<C-a>"] = package.loaded.glotta.ui.actions.yank_close_translation
         }
       },
       select = {
@@ -155,3 +155,23 @@ require("perapera").setup{
   }
 }
 ```
+
+## TODO
+- [ ] Documentation
+  - [ ] warning sentence splitting newline
+  - [ ] engines disable automatically
+- [x] option to deactivate engines (automatically through errors)
+- [ ] google, apertium & yandex engines (https://github.com/Animenosekai/translate)
+- [x] help window
+
+- [ ] docstrings
+- [ ] formatter/linter
+- [ ] tests
+- [ ] ci (github actions)
+- [ ] health check (e.g. if curl is installed)
+- [x] Figure out good way to configuration
+- [x] message ordering of async curl requests (implemented as mutexes)
+- [x] interactive select menu
+- [x] conventional commits
+- [x] actions: rename window to ui
+- [x] operatorfunc

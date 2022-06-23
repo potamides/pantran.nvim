@@ -1,7 +1,7 @@
-local actions = require("perapera.ui.actions")
-local buffer = require("perapera.utils.buffer")
-local zip = require("perapera.utils.table").zip
-local config = require("perapera.config")
+local actions = require("glotta.ui.actions")
+local buffer = require("glotta.utils.buffer")
+local zip = require("glotta.utils.table").zip
+local config = require("glotta.config")
 
 local controls = {}
 

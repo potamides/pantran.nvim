@@ -1,4 +1,4 @@
-local config = require("perapera.config")
+local config = require("glotta.config")
 
 local window = {
   config = {
@@ -19,7 +19,7 @@ local window = {
       signcolumn     = "auto",
       colorcolumn    = "",
       fillchars      = "eob: ",
-      winhighlight   = "Normal:PeraperaNormal,SignColumn:PeraperaNormal,FloatBorder:PeraperaBorder",
+      winhighlight   = "Normal:GlottaNormal,SignColumn:GlottaNormal,FloatBorder:GlottaBorder",
       textwidth      = 0,
     }
   }
@@ -74,13 +74,13 @@ function window:set_virtual(args)
   -- abuse signcolumn to get primitive anti-conceal (see https://github.com/neovim/neovim/issues/16466)
   if args.left and args.displace then
     for idx, sign in ipairs(args.left) do
-      local name = ("Perapera-%p-%d"):format(self, idx)
+      local name = ("Glotta-%p-%d"):format(self, idx)
       vim.fn.sign_define{{name = name, text = sign[1][1], texthl = sign[1][2]}}
       self._signs[idx] = {
         name = name,
         id = vim.fn.sign_place(
           self._signs[idx] and self._signs[idx].id or 0,
-          "perapera",
+          "glotta",
           name,
           self.virtnr,
           {lnum = idx}
@@ -97,14 +97,14 @@ function window:set_virtual(args)
     for idx, line in ipairs(lines) do
 
       if args.separator then
-        local sep = {args.separator, "PeraperaNormal"}
+        local sep = {args.separator, "GlottaNormal"}
         for i = #line - 1, 1, -1 do
           table.insert(line, i + 1, sep)
         end
       end
 
       if args.margin then
-        local margin = {args.margin, "PeraperaNormal"}
+        local margin = {args.margin, "GlottaNormal"}
         table.insert(line, pos == "right" and #line + 1 or 1, margin)
       end
 
@@ -134,7 +134,7 @@ end
 function window:_clear_signs(start)
   for idx = #self._signs, start or 1, -1 do
     local sign = table.remove(self._signs, idx)
-    vim.fn.sign_unplace("perapera", {buffer = self.virtnr, id = sign.id})
+    vim.fn.sign_unplace("glotta", {buffer = self.virtnr, id = sign.id})
     vim.fn.sign_undefine(sign.name)
   end
 end
@@ -170,9 +170,9 @@ function window:set_title(title)
 
   self._title = title
   self.title:set_virtual{left = {{
-    {self.config.title_border[1], "PeraperaBorder"},
-    {title, "PeraperaTitle"},
-    {self.config.title_border[2], "PeraperaBorder"}
+    {self.config.title_border[1], "GlottaBorder"},
+    {title, "GlottaTitle"},
+    {self.config.title_border[2], "GlottaBorder"}
   }}}
 end
 
@@ -268,7 +268,7 @@ end
 -- must set width and height
 function window.new(conf)
   local self = setmetatable(window._create(conf), {__index = window._safe_call})
-  self._namespace = vim.api.nvim_create_namespace("perapera")
+  self._namespace = vim.api.nvim_create_namespace("glotta")
   self._signs, self._extmarks = {}, {
     right = {},
     left = {}

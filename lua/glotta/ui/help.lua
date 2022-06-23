@@ -1,9 +1,9 @@
 --[[
 Pop-up help window for keybindings.
 --]]
-local buffer = require("perapera.utils.buffer")
-local window = require("perapera.ui.window")
-local config = require("perapera.config")
+local buffer = require("glotta.utils.buffer")
+local window = require("glotta.ui.window")
+local config = require("glotta.config")
 
 local help = {
   title = "Keymap Help",
@@ -62,10 +62,10 @@ function help.toggle()
     for lhs, rhs in pairs(mappings) do
       local line = {
         {mode, "Constant"},
-        {help.config.separator, "PeraperaSeparator"},
-        {lhs, "PeraperaKeymap"},
-        {(" "):rep(max_map_len - #lhs) .. help.config.separator, "PeraperaSeparator"},
-        {rhs, "PeraperaFunction"}
+        {help.config.separator, "GlottaSeparator"},
+        {lhs, "GlottaKeymap"},
+        {(" "):rep(max_map_len - #lhs) .. help.config.separator, "GlottaSeparator"},
+        {rhs, "GlottaFunction"}
       }
       table.insert(lines, line)
       local width = vim.api.nvim_strwidth(help._virt2text(line)) + 2 -- acount for margin

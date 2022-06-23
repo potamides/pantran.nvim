@@ -1,8 +1,8 @@
-local async = require("perapera.async")
-local engines = require("perapera.engines")
-local handlers = require("perapera.handlers")
-local help = require("perapera.ui.help")
-local protected = require("perapera.utils.protected")
+local async = require("glotta.async")
+local engines = require("glotta.engines")
+local handlers = require("glotta.handlers")
+local help = require("glotta.ui.help")
+local protected = require("glotta.utils.protected")
 local actions = {}
 
 function actions.help()

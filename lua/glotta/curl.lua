@@ -1,5 +1,5 @@
-local async = require("perapera.async")
-local config = require("perapera.config")
+local async = require("glotta.async")
+local config = require("glotta.config")
 
 local curl = {
   config = {
