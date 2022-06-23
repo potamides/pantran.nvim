@@ -1,11 +1,14 @@
-# Glotta
-Glotta is here to help you use your favorite machine translation engines
-without having to leave your favorite editor. It makes use of Neovim's
+# Glotta.nvim
+With glotta.nvim, you can use your favorite machine translation engines without
+having to leave your favorite editor. It makes use of Neovim's
 [api-floatwin](https://neovim.io/doc/user/api.html#api-floatwin) to implement
 an asynchronous, interactive machine translation interface, similar to how most
 of the various machine translation web font-ends work. In addition to that,
-other (non-interactive) modes are also supported. If you try hard enough,
-Glotta can also be used as an API.
+other (non-interactive) modes are also supported and if you try hard enough,
+glotta.nvim can also be used as an API. In other words, this plugin is here to
+help you deal with any
+[γλῶττᾰ](https://en.wiktionary.org/wiki/γλῶσσα#Ancient_Greek) with the power of
+Neovim.
 
 <!-- panvimdoc-ignore-start -->
 <p align="center">
@@ -109,7 +112,7 @@ recommended<!-- panvimdoc-ignore-start --> (see the [docs](doc/README.md) for
 more information)<!-- panvimdoc-ignore-end -->.
 
 ## Configuration
-Glotta supports a wide range of configuration options. Some essential ones
+Glotta.nvim supports a wide range of configuration options. Some essential ones
 are listed below<!-- panvimdoc-ignore-start -->, for a full list consult the
 additional [documentation](doc/README.md)<!-- panvimdoc-ignore-end -->. The
 invocation of `require("glotta").setup()` is optional.
