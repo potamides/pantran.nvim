@@ -7,7 +7,6 @@ Table of Contents                                   *glotta-table-of-contents*
   - Quickstart                                             |glotta-quickstart|
   - Supported Engines                               |glotta-supported-engines|
   - Configuration                                       |glotta-configuration|
-  - TODO                                                         |glotta-todo|
 2. Documentation                                        |glotta-documentation|
 
 ==============================================================================
@@ -135,29 +134,6 @@ are listed below. The invocation of `require("glotta").setup()` is optional.
       }
     }
 <
-
-
-TODO                                                             *glotta-todo*
-
-
-- ☐ Documentation
-    - ☐ warning sentence splitting newline
-    - ☐ engines disable automatically
-- ☒ option to deactivate engines (automatically through errors)
-- ☐ google, apertium & yandex engines
-    <https://github.com/Animenosekai/translat>
-- ☒ help window
-- ☐ docstrings
-- ☐ formatter/linter
-- ☐ tests
-- ☐ ci (github actions)
-- ☐ health check (e.g. if curl is installed)
-- ☒ Figure out good way to configuration
-- ☒ message ordering of async curl requests (implemented as mutexes)
-- ☒ interactive select menu
-- ☒ conventional commits
-- ☒ actions: rename window to ui
-- ☒ operatorfunc
 
 
 ==============================================================================
