@@ -3,42 +3,46 @@
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
 
-1. Glotta.nvim                                           |pantran-glotta.nvim|
-  - Quickstart                                            |pantran-quickstart|
-  - Supported Engines                              |pantran-supported-engines|
-  - Configuration                                      |pantran-configuration|
-2. Documentation                                       |pantran-documentation|
+1. Quickstart                                             |pantran-quickstart|
+2. Scope                                                       |pantran-scope|
+3. Usage                                                       |pantran-usage|
+4. Engines                                                   |pantran-engines|
+  - Apertium                                                |pantran-apertium|
+  - Argos Translate                                  |pantran-argos-translate|
+  - DeepL                                                      |pantran-deepl|
+  - Google Translate                                |pantran-google-translate|
+  - Yandex Translate                                |pantran-yandex-translate|
+5. Default Mappings                                 |pantran-default-mappings|
+  - Edit Window                                          |pantran-edit-window|
+  - Select Mode                                          |pantran-select-mode|
+6. Highlight Groups                                 |pantran-highlight-groups|
+7. Programmatical Usage                         |pantran-programmatical-usage|
+
+With pantran.nvim, you can use your favorite machine translation engines
+without having to leave your favorite editor. It makes use of Neovim’s
+|api-floatwin| to implement an asynchronous, interactive machine translation
+interface, similar to how most of the various machine translation web font-ends
+work. In addition to that, other (non-interactive) modes are also supported
+and, if you try hard enough, pantran.nvim can also be used as an API.
 
 ==============================================================================
-1. Glotta.nvim                                           *pantran-glotta.nvim*
+1. Quickstart                                             *pantran-quickstart*
 
-With glotta.nvim, you can use your favorite machine translation engines without
-having to leave your favorite editor. It makes use of Neovim’s |api-floatwin|
-to implement an asynchronous, interactive machine translation interface,
-similar to how most of the various machine translation web font-ends work. In
-addition to that, other (non-interactive) modes are also supported and if you
-try hard enough, glotta.nvim can also be used as an API. In other words, this
-plugin is here to help you deal with any γλῶττᾰ
-<https://en.wiktionary.org/wiki/γλῶσσα#Ancient_Greek> with the power of
-Neovim.
-
-QUICKSTART                                                *pantran-quickstart*
-
-Run the command `:Glotta<cr>` to open an interactive translation window and
-start typing to get an understanding of how things work. Type `g?` in normal
-mode or `i_CTRL-/` in insert mode to open a help buffer with available
-keybindings. `Glotta` also supports command ranges to initialize the
-translation winodw. Further, some optional flags for configuration of the
-translation process are available. If you plan to translate frequently, the
-command can also be mapped to the following recommended keybindings:
+Run the command `:Pantran` to open an interactive translation window and start
+typing to get an understanding of how things work. Type `g?` in normal mode or
+`i_CTRL-/` in insert mode to open a help buffer with available keybindings.
+`:Pantran` also supports command ranges to initialize the translation winodw.
+Further, some optional flags for configuration of the translation process are
+available. If you plan to translate frequently, the command can also be mapped
+to the following recommended keybindings:
 
 Neovim 0.7+
 
 >
     local opts = {noremap = true, silent = true}
-    vim.keymap.set("n", "<leader>tr", glotta.motion_translate, opts)
-    vim.keymap.set("n", "<leader>trr", function() return glotta.motion_translate() .. "_" end, opts)
-    vim.keymap.set("x", "<leader>tr", glotta.motion_translate, opts)
+    vim.keymap.set("n", "<leader>tr", pantran.motion_translate, opts)
+    vim.keymap.set("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, opts)
+    vim.keymap.set("x", "<leader>tr", pantran.motion_translate, opts)
 <
 
 
@@ -46,9 +50,9 @@ Neovim 0.6
 
 >
     local opts = {noremap = true, silent = true}
-    vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
-    vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('glotta').motion_translate() .. '_'")]], opts)
-    vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('glotta').motion_translate()")]], opts)
+    vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
+    vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('pantran').motion_translate() .. '_'")]], opts)
+    vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
 <
 
 
@@ -60,12 +64,13 @@ the additional support for |text objects|. You can use `<leader>tris` or
 Other translation modes like replacing or appending text immediately without
 opening an interactive window are also implemented.
 
-SUPPORTED ENGINES                                  *pantran-supported-engines*
+==============================================================================
+2. Scope                                                       *pantran-scope*
 
 The plugin already supports a few different translation engines. If you have
 any further suggestions feel free to open an issue
-<https://github.com/potamides/glotta.nvim/issues> or pull request
-<https://github.com/potamides/glotta.nvim/pulls>! The currently supported
+<https://github.com/potamides/pantran.nvim/issues> or pull request
+<https://github.com/potamides/pantran.nvim/pulls>! The currently supported
 engines are as follows:
 
 
@@ -88,58 +93,383 @@ produce inferior translations
 <https://github.com/Animenosekai/translate/issues/22>. So if you want to use a
 commercial engine, configuring authentication is usually recommended.
 
-CONFIGURATION                                          *pantran-configuration*
+==============================================================================
+3. Usage                                                       *pantran-usage*
 
-Glotta.nvim supports a wide range of configuration options. Some essential ones
-are listed below. The invocation of `require("glotta").setup()` is optional.
+If not otherwise specified the remainder of this document assumes that
 
 >
-    require("glotta").setup{
-      engines = {
-        -- Configuration for individual engines goes here. To list available engine
-        -- identifiers run `:lua =vim.tbl_keys(require("glotta.engines"))`)
-        default_engine = "argos"
-        yandex = {
-          -- Default languages can be defined on a per engine basis. In this case
-          -- `:lua =require("glotta.async").run(function()
-          -- vim.pretty_print(require("glotta.engines").yandex:languages()) end)`
-          -- can be used to list available language identifiers.
-          default_source = "auto",
-          default_target = "en"
-        },
-      },
-      controls = {
-        mappings = {
-          edit = {
-            n = {
-              -- Use this table to add additional mappings for the normal mode in
-              -- the translation window. Either strings or function references are
-              -- supported.
-              ["j"] = "gj",
-              ["k"] = "gk"
-            }
-            i = {
-              -- Similar table but for insert mode. Using 'false' disables existing
-              -- keybindings.
-              ["<C-y>"] = false,
-              ["<C-a>"] = package.loaded.glotta.ui.actions.yank_close_translation
-            }
-          },
-          select = {
-            n = {
-              -- Keybindings here are used in the selection window.
-            }
-          }
-        }
-      }
-    }
+    local pantran = require("pantran")
+    local actions = require("pantran.ui.actions")
+    local engines = require("pantran.engines")
+    local async = require("pantran.async")
 <
 
 
+                                                     *pantran-pantran.setup()*
+
+pantran.setup({opts})                  Setup function to be run by user.
+
+
+Can be used to configure translation engines, appearance, and keybindings. The
+invocation is optional, if you don’t want to customize anything you don’t
+need to call it. Valid keys for `opt` are:
+
+
+- `default_engine`: String which specifies the default engine to use in the
+    various translation modes. Can be one of `"apertium"`, `"argos"`, `"deepl"`,
+    `"google"`, and `"yandex"`. Default is `"argos"`.
+- `command`: Table which can be used to configure the default behavior of
+    |pantran-:pantran|. It accepts the following keys:
+    - `default_mode`: The default translation mode when it isn’t explicitly
+        specified on the command line. Accepted values are `"interactive"`, `"yank"`
+        `"replace"` `"append"`, and `"hover"`. Default is `"interactive"`.
+- `curl`: Table which configures the default behavior for invoking curl and
+    connecting to a server. Accepts the following keys:
+    - `cmd`: The command used to invoke curl. Defaults to `curl`.
+    - `retry`: Retry attempts when curl fails to connect to a server. Defaults to
+        `3`.
+    - `timeout`: Maximum time in seonds that curl’s connection is allowed to take.
+        Defaults to `15`.
+- `help`: Table which configures the appearance of the help pop up window.
+    Accepts the following keys:
+    `separator`: Separator between elements in the help buffer. Defaults to `" ►
+    "`.
+- `ui`: Table which configures the appearance of the interactive user interface.
+    It accepts the following keys:
+    - `width_percentage`: The percentage of the terminal window width that the UI
+        should occupy. Defaults to `0.6`.
+    - `height_percentage`: The percentage of the terminal window height that the UI
+        should occupy. Defaults to `0.3`.
+    - `min_height`: Minimum height of the UI in terminal rows. This is only used when
+        the height calculated with `height_percentage` is smaller. Defaults to `10`.
+    - `min_width`: Minimum width of the UI in terminal columns. This is only used
+        when the width calculated with `width_percentage` is smaller. Defaults to `40`.
+    - `scrollbind`: Configures if the translation window should scroll with the input
+        window or not. Defaults to `true`.
+- `select`: Table which configures the selection mode, i.e., when selecting
+    another language or engine. It accepts the following keys:
+    - `prompt_prefix`: Prefix string used right before the input field for filtering
+        matches. Defaults to `"> "`.
+    - `selection_caret`: Prefix string used before the currently selected element in
+        the selection window. Defaults to `"► "`.
+- `window`: Table with configuration options for individual floating windows of
+    the user interface. It accepts the following keys:
+    - `title_border`: Table with two elements that are used to decorate left and
+        right sides of the window title. Defaults to `{"┤ ", " ├"}`.
+    - `window_config`: Map the default window configuration. Consult the
+        documentation of |nvim_open_win()| for a list of valid keys. Defaults to
+        `{relative = "editor", border = "single"}`.
+    - `options`: Table of options to set in each buffer and window. You can specify
+        both buffer-local and window-local options. Defaults to
+    >
+        {
+          number         = false,
+          relativenumber = false,
+          cursorline     = false,
+          cursorcolumn   = false,
+          linebreak      = true,
+          breakindent    = true,
+          wrap           = true,
+          foldcolumn     = "0",
+          signcolumn     = "auto",
+          colorcolumn    = "",
+          fillchars      = "eob: ",
+          winhighlight   = "Normal:PantranNormal,SignColumn:PantranNormal,FloatBorder:PantranBorder",
+          textwidth      = 0
+        }
+    <
+- `engines`: Table with configuration options for individual engines. It accepts
+    the following keys:
+    - `apertium`: See |pantran-apertium|.
+    - `argos`: See |pantran-argos-translate|.
+    - `deepl`: See |pantran-deepl|.
+    - `google`: See |pantran-google-translate|.
+    - `yandex`: See |pantran-yandex-translate|.
+- `controls`: Table with keybindings and other configuration options that are
+    directly influenced by them. Accepts the following keys:
+    - `updatetime`: Milliseconds to wait for user input. If the user doesn’t type
+        anything in the specified time frame then the current input text is translated
+        automatically and displayed in the translation window. Defaults to `300`.
+    - `mappings`: Table for configuration of keybindings. This is a nested table
+        structure. It can contain the keys `edit` and `select` which configure the
+        keybindings used in the main translation window and during the selection mode.
+        Each of these two tables can contain the keys `i` and `n` for setting insert
+        and normal mode bindings. The key should be the actual binding and the value
+        the action to perform. This can either be a function, a string, or `false` to
+        disable an existing keybinding. Visit |pantran-default-mappings| for additional
+        information.
+
+
+                                                            *pantran-:Pantran*
+
+:[range]Pantran {args}                 Command for running a translation.
+
+
+It supports various arguments which are expected to be in the `<key>=<value>`
+format. Tab completion is also implemented. When a range is used then the
+corresponding text is used to initialize the input in the translation window.
+The following parameters are supported:
+
+
+- `mode`: The translation mode to use instead of the default mode. Consult for
+    |pantran-pantran.setup()| for a list of possible values.
+- `engine`: The initial engine to use instead of the default engine. Consult for
+    |pantran-pantran.setup()| for a list of possible values.
+- `source`: The initial source language to use for this translation. Allowed
+    values depend on the engine, see |pantran-engines| for details.
+- `target`: The initial target language to use for this translation. Allowed
+    values depend on the engine, see |pantran-engines| for details.
+
+
+                                          *pantran-pantran.motion_translate()*
+
+pantran.motion_translate({opts})       Function to use in keybindings for
+                                       translations.
+
+
+This function is useful for keyboard mappings, as it supports both ranges and
+motions. Which is helpful to quickly translate a piece of text. `opts` is a
+table which supports the same keys and values as |pantran-:pantran|.
+
+                                           *pantran-pantran.range_translate()*
+
+pantran.range_translate({opts})        The function used internally by the
+                                       command |pantran-:pantran|.
+
+
+The previous function |pantran-pantran.motion_translate()| is probably the best
+choice for mappings, as this function does not support motions. But in some
+cases this might be more useful (e.g., when for your own custom commands). The
+allowed arguments are the same.
+
 ==============================================================================
-2. Documentation                                       *pantran-documentation*
+4. Engines                                                   *pantran-engines*
+
+Information about supported translation engines and their configuration.
+Engines which are not properly configured (e.g., missing API keys) are disabled
+automatically and can’t be used. If there are fallback modes available which
+do not require authentication then these are used instead. Also note, that most
+engines split their input on newlines before attempting translation. If you do
+not want that it is advisable to put all coherent input text on one line. You
+could then use |gj| and |gk| to move over wrapped lines. Default languages are
+configured on a per-engine basis and valid identifiers might vary from engine
+to engine. You can list valid identifiers with the following command (this
+examples uses `argos`):
+
+>
+    :lua async.run(function() print(vim.inspect(engines.argos:languages())) end)
+<
+
+
+Other available configuration options usually reflect what the API endpoints
+have to offer and are therefore different from engine to engine.
+
+APERTIUM                                                    *pantran-apertium*
+
+Apertium is a FOSS rule-based machine translation system and can be used right
+away. For |pantran-pantran.setup()| it supports the following configuration
+keys:
+
+
+- `default_source`: Primary source language to use for translation. Default value
+    is `"auto"`.
+- `default_target`: Primary target language to use for translation. Default value
+    is `"eng"`.
+- `fallback_source`: Apertium is a little bit quirky and sometimes the language
+    detection endpoint returns wrong languages that it also can’t translate. In
+    these cases this language is used as a fallback. Default is `"deu"`.
+- `url`: URL of the Apertium instance to use. Defaults to
+    `"https://beta.apertium.org/apy"`.
+- `markUnknown`: If `"yes"`, uses `*` to mark unknown words. Default value is
+    `"no"`.
+- `format`: Text format of the translation input. Can be one of `"html"`,
+    `"txt"`, and `"rtf"`. Default value is `"txt"`.
+
+
+ARGOS TRANSLATE                                      *pantran-argos-translate*
+
+Argos Translate is an open-source (offline) machine translation library. The
+web-app and API built on top of it is called LibreTranslate. For
+|pantran-pantran.setup()| it supports the following configuration keys:
+
+
+- `default_source`: Primary source language to use for translation. Default value
+    is `"auto"`.
+- `default_target`: Primary target language to use for translation. Default value
+    is `"en"`.
+- `url`: URL of the Argos Translate instance to use. Defaults to
+    `"https://translate.argosopentech.com"`.
+- `api_key`: Some Argos Translate instances require an API key to control
+    traffic. The configured default instance does not, so you don’t need to set
+    it. If you change the instance, however, you might also need to configure an
+    API key. Defaults to `vim.NIL`.
+
+
+DEEPL                                                          *pantran-deepl*
+
+DeepL is a commercial and proprietary neural machine translation service. For
+programmatic access, the DeepL API requires an API key. Without it this engine
+can’t be used and it is therefore deactivated. Note that a free API plan is
+available. For |pantran-pantran.setup()| it supports the following
+configuration keys:
+
+
+- `default_source`: Primary source language to use for translation. Default value
+    is `vim.NIL` (i.e., when unset the API will attempt to detect the language
+    automatically).
+- `default_target`: Primary target language to use for translation. Default value
+    is `"EN-US"`.
+- `auth_key`: The API key to use for this engine. Defaults to
+    `vim.env.DEEPL_AUTH_KEY` (i.e., an environment variable).
+- `free_api`: Boolean which specifies whether the API key is for the DeepL API
+    Free or DeepL API Pro plan. Defaults to `true`.
+- `split_sentences`: Sets whether the translation engine should first split the
+    input into sentences. Possible values are `0`, `1` (default), and `nonewlines`.
+- `preserve_formatting`: Sets whether the translation engine should respect the
+    original formatting, even if it would usually correct some aspects. Possible
+    values are `0` (default), and `1`.
+- `formality`: Sets whether the translated text should lean towards formal or
+    informal language. Possible values are `"default"` (default), `"more"`, and
+    `"less"`.
+
+
+GOOGLE TRANSLATE                                    *pantran-google-translate*
 
 WIP
+
+YANDEX TRANSLATE                                    *pantran-yandex-translate*
+
+Yandex Translate is a web service provided by Yandex for machine translation.
+The default endpoint uses the Yandex Translate v2 API, for which you need to
+authenticate with an IAM token for your account. If you do not have an account
+this plugin falls back to the old Yandex Translate v1 API which works without
+authentication. Note, however that this endpoint is deprecated and thus might
+stop working any time. For |pantran-pantran.setup()| the primary v2 endpoint
+supports the following configuration keys:
+
+
+- `default_source`: Primary source language to use for translation. Default value
+    is `vim.NIL` (i.e., when unset the API will attempt to detect the language
+    automatically).
+- `default_target`: Primary target language to use for translation. Default value
+    is `"en"`.
+- `iam_token`: The token to use for this engine. Defaults to
+    `vim.env.YANDEX_IAM_TOKEN` (i.e., an environment variable).
+- `folder_id`: A folder is an isolated space where Yandex Cloud resources are
+    created and grouped. Setting this is only required for user accounts. Defaults
+    to `vim.env.YANDEX_FOLDER_ID` (i.e., an environment variable).
+- `format`: Format of the text. Possible values are `"PLAIN_TEXT"` (default) and
+    `"HTML"`.
+- `fallback`: Table with configuration options for the fallback v1 endpoint. It
+    accepts the following keys:
+    - `default_source`: Primary source language to use for translation. Default value
+        is `"auto"`.
+    - `default_target`: Primary target language to use for translation. Default value
+        is `"en"`.
+
+
+==============================================================================
+5. Default Mappings                                 *pantran-default-mappings*
+
+Default keybindings for various modes in the interactive translation UI. If not
+otherwise specified actions live in the `actions` module. Replace actions
+replace the text with which the translation window was initialized (e.g.,
+through a range or a movement). Note that `<C-_>` is the key from pressing
+`<C-/>`.
+
+EDIT WINDOW                                              *pantran-edit-window*
+
+│ Insert  │         Action          │              Description              │
+│<C-c>    │close                    │Terminate current translation.         │
+│<C-_>    │help                     │Show mappings in floating window.      │
+│<C-y>    │yank_close_translation   │Yank translation and quit.             │
+│<M-y>    │yank_close_input         │Yank input and quit.                   │
+│<C-r>    │replace_close_translation│Replace text with translation and quit.│
+│<M-r>    │replace_close_input      │Replace text with input and quit.      │
+│<C-a>    │append_close_translation │Append translation to text and quit.   │
+│<M-a>    │append_close_input       │Append input to text and quit.         │
+│<C-e>    │select_engine            │Select a new translation engine.       │
+│<C-s>    │select_source            │Select a new source language.          │
+│<C-t>    │select_target            │Select a new target language.          │
+│<M-s>    │switch_languages         │Switch source with target language.    │
+│<M-t>    │translate                │Manually trigger translation.          │
+
+
+│ Normal  │         Action          │              Description              │
+│q        │close                    │Terminate current translation.         │
+│<Esc>    │close                    │Terminate current translation.         │
+│g?       │help                     │Show mappings in floating window.      │
+│gy       │yank_close_translation   │Yank translation and quit.             │
+│gY       │yank_close_input         │Yank input and quit.                   │
+│gr       │replace_close_translation│Replace text with translation and quit.│
+│gR       │replace_close_input      │Replace text with input and quit.      │
+│ga       │append_close_translation │Append translation to text and quit.   │
+│gA       │append_close_input       │Append input to text and quit.         │
+│ge       │select_engine            │Select a new translation engine.       │
+│gs       │select_source            │Select a new source language.          │
+│gt       │select_target            │Select a new target language.          │
+│gS       │switch_languages         │Switch source with target language.    │
+│gT       │translate                │Manually trigger translation.          │
+
+
+SELECT MODE                                              *pantran-select-mode*
+
+│  Insert  │   Action    │                Description                 │
+│<C-_>     │help         │Show mappings in floating window.           │
+│<C-n>     │select_next  │Select next item in the list.               │
+│<C-p>     │select_prev  │Select previous item in the list.           │
+│<C-j>     │select_next  │Select next item in the list.               │
+│<C-k>     │select_prev  │Select previous item in the list.           │
+│<Down>    │select_next  │Select next item in the list.               │
+│<Up>      │select_prev  │Select previous item in the list.           │
+│<Cr>      │select_choose│Choose current item and exit selection mode.│
+│<C-y>     │select_choose│Choose current item and exit selection mode.│
+│<C-e>     │select_abort │Abort current selection.                    │
+
+
+│  Normal  │   Action    │                Description                 │
+│g?        │help         │Show mappings in floating window.           │
+│j         │select_next  │Select next item in the list.               │
+│k         │select_prev  │Select previous item in the list.           │
+│<Down>    │select_next  │Select next item in the list.               │
+│<Up>      │select_prev  │Select previous item in the list.           │
+│gg        │select_first │Select next item in the list.               │
+│G         │select_last  │Select previous item in the list.           │
+│<Cr>      │select_choose│Choose current item and exit selection mode.│
+│<Esc>     │select_abort │Abort current selection.                    │
+│q         │select_abort │Abort current selection.                    │
+
+
+==============================================================================
+6. Highlight Groups                                 *pantran-highlight-groups*
+
+Pantran.nvim defines and uses some highlight groups to bring color to its UI.
+Advanced users can overwrite them to their liking. Run `:echo
+getcompletion('Pantran', 'highlight')` to see which highlight groups are used.
+
+==============================================================================
+7. Programmatical Usage                         *pantran-programmatical-usage*
+
+Pantran.nvim can also be used as an API in your own scripts. Note, however,
+that this is highly experimental as it requires access to internal APIs which
+are subject to change.
+
+>
+    local function translate(sentence)
+      -- Engine methods can throw errors (e.g., due to timeouts or other network
+      -- errors), which is why we use pcall.
+      local ok, translation = pcall(engines.argos.translate, sentence)
+      if ok then
+        print(translation.text)
+      end
+    end
+    
+    async.run(translate, "Hallo Welt!") -- prints "Hello World!"
+<
+
+
+
 
 Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
 
