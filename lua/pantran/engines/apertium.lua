@@ -4,8 +4,8 @@ local config = require("pantran.config")
 -- API reference: https://wiki.apertium.org/wiki/Apertium-apy
 local apertium = {
   name = "Apertium",
-  url = "https://beta.apertium.org/apy",
   config = {
+    url = "https://beta.apertium.org/apy",
     default_source = "auto",
     fallback_source = "deu",
     default_target = "eng",
@@ -119,7 +119,7 @@ end
 
 function apertium.setup()
   apertium._api = curl.new{
-    url = apertium.url,
+    url = apertium.config.url,
     fmt_error = fmt_error,
     static_paths = {"listPairs", "listLanguageNames"},
   }
