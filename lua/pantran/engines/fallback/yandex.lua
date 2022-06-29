@@ -85,4 +85,4 @@ function yandex.setup()
   }
 end
 
-return config.apply(config.user.engines.fallback.yandex, yandex)
+return config.apply(config.user.engines.yandex.fallback, yandex)
