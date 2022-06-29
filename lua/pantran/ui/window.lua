@@ -189,7 +189,7 @@ end
 
 function window:set_option(option, value)
   local scope = vim.api.nvim_get_option_info(option).scope
-  if  scope == "buf" then
+  if scope == "buf" then
     vim.api.nvim_buf_set_option(self.bufnr, option, value)
     vim.api.nvim_buf_set_option(self.virtnr, option, value)
   elseif scope == "win" then
@@ -274,8 +274,14 @@ function window.new(conf)
     left = {}
   }
 
-  for option, value in pairs(self.config.options) do
-    self:set_option(option, value)
+  -- FIXME: window-local options are sometimes reset when switching buffers
+  -- (seems to happen only with 'fillchars'). Find out why, it might be a bug
+  -- in Neovim. This quickfix sets window-local options for each buffer.
+  for _, buf in ipairs{self.virtnr, self.bufnr} do
+    self:_set_buf(buf)
+    for option, value in pairs(self.config.options) do
+      self:set_option(option, value)
+    end
   end
 
   return self
