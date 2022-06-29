@@ -1,10 +1,10 @@
-local controls = require("glotta.ui.controls")
-local window = require("glotta.ui.window")
-local selector = require("glotta.ui.select")
-local async = require("glotta.async")
-local config = require("glotta.config")
-local properties = require("glotta.utils.properties")
-local bufutils = require("glotta.utils.buffer")
+local controls = require("pantran.ui.controls")
+local window = require("pantran.ui.window")
+local selector = require("pantran.ui.select")
+local async = require("pantran.async")
+local config = require("pantran.config")
+local properties = require("pantran.utils.properties")
+local bufutils = require("pantran.utils.buffer")
 
 local ui = {
   config = {
@@ -75,14 +75,14 @@ function ui:update()
 
     if source then
       self._win.languagebar:set_virtual{
-        left = {{{source, "GlottaLanguagebar"}, detected and {detected, "GlottaLanguagebar"} or nil}},
+        left = {{{source, "PantranLanguagebar"}, detected and {detected, "PantranLanguagebar"} or nil}},
         separator = " ",
         margin = " "
       }
     end
     if target then
       self._win.languagebar:set_virtual{
-        right = {{{target, "GlottaLanguagebar"}}},
+        right = {{{target, "PantranLanguagebar"}}},
         margin = " ",
       }
     end

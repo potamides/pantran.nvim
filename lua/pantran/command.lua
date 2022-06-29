@@ -1,13 +1,13 @@
-local engines = require("glotta.engines")
-local ui = require("glotta.ui")
-local handlers = require("glotta.handlers")
-local async = require("glotta.async")
-local config = require("glotta.config")
-local uapi = require("glotta.utils.api")
-local protected = require("glotta.utils.protected")
+local engines = require("pantran.engines")
+local ui = require("pantran.ui")
+local handlers = require("pantran.handlers")
+local async = require("pantran.async")
+local config = require("pantran.config")
+local uapi = require("pantran.utils.api")
+local protected = require("pantran.utils.protected")
 
 local command = {
-  namespace = vim.api.nvim_create_namespace("glotta"),
+  namespace = vim.api.nvim_create_namespace("pantran"),
   config = {
     default_mode = "interactive"
   },
@@ -91,7 +91,7 @@ local _opts
 function command.motion_translate(arg)
   if not arg or type(arg) == "table" then -- see :h :map-operator
     _opts = arg
-    vim.opt.operatorfunc = "v:lua.require'glotta.command'.motion_translate"
+    vim.opt.operatorfunc = "v:lua.require'pantran.command'.motion_translate"
     return 'g@'
   end
 

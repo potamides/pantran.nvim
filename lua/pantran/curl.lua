@@ -1,5 +1,5 @@
-local async = require("glotta.async")
-local config = require("glotta.config")
+local async = require("pantran.async")
+local config = require("pantran.config")
 
 local curl = {
   config = {

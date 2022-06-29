@@ -1,9 +1,9 @@
 --[[
 Pop-up help window for keybindings.
 --]]
-local buffer = require("glotta.utils.buffer")
-local window = require("glotta.ui.window")
-local config = require("glotta.config")
+local buffer = require("pantran.utils.buffer")
+local window = require("pantran.ui.window")
+local config = require("pantran.config")
 
 local help = {
   title = "Keymap Help",
@@ -62,10 +62,10 @@ function help.toggle()
     for lhs, rhs in pairs(mappings) do
       local line = {
         {mode, "Constant"},
-        {help.config.separator, "GlottaSeparator"},
-        {lhs, "GlottaKeymap"},
-        {(" "):rep(max_map_len - #lhs) .. help.config.separator, "GlottaSeparator"},
-        {rhs, "GlottaFunction"}
+        {help.config.separator, "PantranSeparator"},
+        {lhs, "PantranKeymap"},
+        {(" "):rep(max_map_len - #lhs) .. help.config.separator, "PantranSeparator"},
+        {rhs, "PantranFunction"}
       }
       table.insert(lines, line)
       local width = vim.api.nvim_strwidth(help._virt2text(line)) + 2 -- acount for margin

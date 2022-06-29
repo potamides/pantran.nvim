@@ -1,4 +1,4 @@
-local async = require("glotta.async")
+local async = require("pantran.async")
 
 local protected = {}
 

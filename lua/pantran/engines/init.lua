@@ -1,11 +1,11 @@
-local config = require("glotta.config")
-local utable = require("glotta.utils.table")
+local config = require("pantran.config")
+local utable = require("pantran.utils.table")
 
 local engines = {
-  apertium = require("glotta.engines.apertium"),
-  argos  = require("glotta.engines.argos"),
-  deepl  = require("glotta.engines.deepl"),
-  yandex = require("glotta.engines.yandex"),
+  apertium = require("pantran.engines.apertium"),
+  argos  = require("pantran.engines.argos"),
+  deepl  = require("pantran.engines.deepl"),
+  yandex = require("pantran.engines.yandex"),
   _mt = {
     __index = {
       -- set config in metatable to hide it when iterating engines in main table

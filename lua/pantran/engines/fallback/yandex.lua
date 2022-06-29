@@ -1,5 +1,5 @@
-local curl = require("glotta.curl")
-local config = require("glotta.config")
+local curl = require("pantran.curl")
+local config = require("pantran.config")
 
 -- implementation based on https://github.com/Animenosekai/translate
 local yandex = {

@@ -1,5 +1,5 @@
-local bufutils = require("glotta.utils.buffer")
-local config = require("glotta.config")
+local bufutils = require("pantran.utils.buffer")
+local config = require("pantran.config")
 
 local selector = {
   config = {
@@ -20,7 +20,7 @@ function selector:update()
   local virtual, format = {}, self._opts.format_item
 
   for idx, item in pairs(self:get_matches()) do
-    local highlight = idx == self._selected and "GlottaSelection" or "GlottaNormal"
+    local highlight = idx == self._selected and "PantranSelection" or "PantranNormal"
     local caret_len = vim.api.nvim_strwidth(self.config.selection_caret)
     local prefix = idx == self._selected and self.config.selection_caret or (" "):rep(caret_len)
     table.insert(virtual, {{prefix, highlight}, {format(item), highlight}})
@@ -30,8 +30,8 @@ function selector:update()
   self._item_win:scroll_to(self._selected)
   self._item_win:set_virtual{left = virtual, hl_eol = true}
   self._edit_win:set_virtual{
-    left = {{{self.config.prompt_prefix, "GlottaPromptPrefix"}}},
-    right = {{{("%d / %d"):format(#virtual, #self._items), "GlottaPromptCounter"}}},
+    left = {{{self.config.prompt_prefix, "PantranPromptPrefix"}}},
+    right = {{{("%d / %d"):format(#virtual, #self._items), "PantranPromptCounter"}}},
     displace = true, nomodify = true
   }
 end

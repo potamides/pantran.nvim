@@ -3,7 +3,7 @@ Turn callback pattern to coroutine pattern, based on
 https://luyuhuang.tech/2020/09/13/callback-to-coroutine.html
 --]]
 
-local utable = require("glotta.utils.table")
+local utable = require("pantran.utils.table")
 
 local async = {
   -- to signal interruption of a coroutine we need a unique

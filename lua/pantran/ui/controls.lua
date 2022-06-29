@@ -1,7 +1,7 @@
-local actions = require("glotta.ui.actions")
-local buffer = require("glotta.utils.buffer")
-local zip = require("glotta.utils.table").zip
-local config = require("glotta.config")
+local actions = require("pantran.ui.actions")
+local buffer = require("pantran.utils.buffer")
+local zip = require("pantran.utils.table").zip
+local config = require("pantran.config")
 
 local controls = {}
 

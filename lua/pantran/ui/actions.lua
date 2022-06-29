@@ -1,8 +1,8 @@
-local async = require("glotta.async")
-local engines = require("glotta.engines")
-local handlers = require("glotta.handlers")
-local help = require("glotta.ui.help")
-local protected = require("glotta.utils.protected")
+local async = require("pantran.async")
+local engines = require("pantran.engines")
+local handlers = require("pantran.handlers")
+local help = require("pantran.ui.help")
+local protected = require("pantran.utils.protected")
 local actions = {}
 
 function actions.help()

@@ -1,4 +1,4 @@
-local config = require("glotta.config")
+local config = require("pantran.config")
 
 local window = {
   config = {
@@ -19,7 +19,7 @@ local window = {
       signcolumn     = "auto",
       colorcolumn    = "",
       fillchars      = "eob: ",
-      winhighlight   = "Normal:GlottaNormal,SignColumn:GlottaNormal,FloatBorder:GlottaBorder",
+      winhighlight   = "Normal:PantranNormal,SignColumn:PantranNormal,FloatBorder:PantranBorder",
       textwidth      = 0,
     }
   }
@@ -74,13 +74,13 @@ function window:set_virtual(args)
   -- abuse signcolumn to get primitive anti-conceal (see https://github.com/neovim/neovim/issues/16466)
   if args.left and args.displace then
     for idx, sign in ipairs(args.left) do
-      local name = ("Glotta-%p-%d"):format(self, idx)
+      local name = ("Pantran-%p-%d"):format(self, idx)
       vim.fn.sign_define{{name = name, text = sign[1][1], texthl = sign[1][2]}}
       self._signs[idx] = {
         name = name,
         id = vim.fn.sign_place(
           self._signs[idx] and self._signs[idx].id or 0,
-          "glotta",
+          "pantran",
           name,
           self.virtnr,
           {lnum = idx}
@@ -97,14 +97,14 @@ function window:set_virtual(args)
     for idx, line in ipairs(lines) do
 
       if args.separator then
-        local sep = {args.separator, "GlottaNormal"}
+        local sep = {args.separator, "PantranNormal"}
         for i = #line - 1, 1, -1 do
           table.insert(line, i + 1, sep)
         end
       end
 
       if args.margin then
-        local margin = {args.margin, "GlottaNormal"}
+        local margin = {args.margin, "PantranNormal"}
         table.insert(line, pos == "right" and #line + 1 or 1, margin)
       end
 
@@ -134,7 +134,7 @@ end
 function window:_clear_signs(start)
   for idx = #self._signs, start or 1, -1 do
     local sign = table.remove(self._signs, idx)
-    vim.fn.sign_unplace("glotta", {buffer = self.virtnr, id = sign.id})
+    vim.fn.sign_unplace("pantran", {buffer = self.virtnr, id = sign.id})
     vim.fn.sign_undefine(sign.name)
   end
 end
@@ -170,9 +170,9 @@ function window:set_title(title)
 
   self._title = title
   self.title:set_virtual{left = {{
-    {self.config.title_border[1], "GlottaBorder"},
-    {title, "GlottaTitle"},
-    {self.config.title_border[2], "GlottaBorder"}
+    {self.config.title_border[1], "PantranBorder"},
+    {title, "PantranTitle"},
+    {self.config.title_border[2], "PantranBorder"}
   }}}
 end
 
@@ -268,7 +268,7 @@ end
 -- must set width and height
 function window.new(conf)
   local self = setmetatable(window._create(conf), {__index = window._safe_call})
-  self._namespace = vim.api.nvim_create_namespace("glotta")
+  self._namespace = vim.api.nvim_create_namespace("pantran")
   self._signs, self._extmarks = {}, {
     right = {},
     left = {}

@@ -1,6 +1,6 @@
-local curl = require("glotta.curl")
-local config = require("glotta.config")
-local fallback = require("glotta.engines.fallback.yandex")
+local curl = require("pantran.curl")
+local config = require("pantran.config")
+local fallback = require("pantran.engines.fallback.yandex")
 
 -- implementation based on https://github.com/Animenosekai/translate
 local yandex = {
