@@ -67,7 +67,7 @@ function window:set_virtual(args)
       self.virtnr,
       ("\n"):rep(math.max(
         args.left and #args.left or math.max(#self._extmarks.left, #self._signs),
-        #(args.right or self._extmarks.right)))
+        #(args.right or self._extmarks.right)) - 1)
     )
   end
 
