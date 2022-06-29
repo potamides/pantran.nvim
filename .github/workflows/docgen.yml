@@ -6,6 +6,7 @@ on:
     paths:
       - 'README.md'
       - 'doc/README.md'
+      - '.github/workflows/docgen.yml'
 
 jobs:
   vimdocgen:
