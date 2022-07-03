@@ -19,9 +19,9 @@ local async = {
 -- Suspend a callback-style function (i.e. yield a coroutine and resume it in
 -- its callback). Useful to use callback pattern instead of coroutine pattern.
 function async.suspend(func, ...)
-  local args = {...}
+  local args = utable.pack(...)
   return coroutine.yield(function(callback)
-    func(unpack(vim.list_extend(args, {callback})))
+    func(utable.unpack(utable.append(args, callback)))
   end)
 end
 

@@ -10,6 +10,21 @@ function table.pop(tbl, key)
   end
 end
 
+--https://stackoverflow.com/a/7186820
+function table.pack(...)
+  return {n = select("#", ...), ...}
+end
+
+function table.unpack(tbl, n)
+  return unpack(tbl, 1, n or tbl.n)
+end
+
+function table.append(tbl, value)
+  _G.table.insert(tbl, tbl.n + 1, value)
+  tbl.n = tbl.n + 1
+  return tbl
+end
+
 function table.defaulttable(default, weak_keys)
   local tbl, mt = {}, {}
 
