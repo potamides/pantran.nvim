@@ -271,11 +271,11 @@ WIP
 ## Yandex Translate
 Yandex Translate is a web service provided by Yandex for machine translation.
 The default endpoint uses the Yandex Translate v2 API, for which you need to
-authenticate with an IAM token for your account. If you do not have an account
-this plugin falls back to the old Yandex Translate v1 API which works without
-authentication. Note, however that this endpoint is deprecated and thus might
-stop working any time. For [pantran.setup()](#pantransetupopts) the primary
-v2 endpoint supports the following configuration keys:
+authenticate with an IAM token or API key for your account. If you do not have
+an account this plugin falls back to the old Yandex Translate v1 API which
+works without authentication. Note, however that this endpoint is deprecated
+and thus might stop working any time. For [pantran.setup()](#pantransetupopts)
+the primary v2 endpoint supports the following configuration keys:
 
 * `default_source`: Primary source language to use for translation. Default
 value is `vim.NIL` (i.e., when unset the API will attempt to detect the
@@ -286,6 +286,11 @@ value is `"en"`.
 
 * `iam_token`: The token to use for this engine. Defaults to
 `vim.env.YANDEX_IAM_TOKEN` (i.e., an environment variable).
+
+* `api_key`: Service accounts can also use an API key for authentication.
+  Since API keys do not expire (unlike IAM tokens) this authentication method
+  is simpler. This has precedence over `iam_token`. Defaults to
+  `vim.env.YANDEX_API_KEY` (i.e., an environment variable).
 
 * `folder_id`: A folder is an isolated space where Yandex Cloud resources are
 created and grouped. Setting this is only required for user accounts.

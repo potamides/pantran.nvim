@@ -7,6 +7,7 @@ local yandex = {
   name = "Yandex Translate v2",
   url = "https://translate.api.cloud.yandex.net/translate/v2",
   config = {
+    api_key = vim.env.YANDEX_API_KEY,
     iam_token = vim.env.YANDEX_IAM_TOKEN,
     folder_id = vim.env.YANDEX_FOLDER_ID, -- only required for user accounts
     default_source = vim.NIL,
@@ -66,20 +67,22 @@ function yandex.translate(text, source, target)
 end
 
 function yandex.setup()
+  local c = yandex.config
+
   yandex._api = curl.new{
     url = yandex.url,
     static_paths = {"listLanguages"},
     fmt_error = function(response) return response.message end,
     headers = {
-      authorization = ("Bearer %s"):format(yandex.config.iam_token)
+      authorization = c.api_key and ("Api-Key %s"):format(c.api_key) or ("Bearer %s"):format(c.iam_token)
     },
     data = {
-      folderId = yandex.config.folder_id,
+      folderId = c.folder_id,
     }
   }
 end
 
-if yandex.config.iam_token then
+if yandex.config.iam_token or yandex.config.api_key then
   return config.apply(config.user.engines.yandex, yandex)
 end
 return fallback
