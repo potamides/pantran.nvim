@@ -107,8 +107,8 @@ function curl.url(uri)
   end
 
   function url._mt.__div(dividend, divisor)
-    local separator = vim.endswith(dividend.url, "/") and "" or "/"
-    return curl.url(("%s%s%s"):format(dividend.url, separator, divisor))
+    local separator = (not divisor or vim.endswith(dividend.url, "/")) and "" or "/"
+    return curl.url(("%s%s%s"):format(dividend.url, separator, divisor or ""))
   end
 
   return setmetatable(url, url._mt)
