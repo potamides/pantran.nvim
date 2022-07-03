@@ -1,4 +1,4 @@
-*pantran.txt*             For NVIM v0.6+             Last change: 2022 June 29
+*pantran.txt*             For NVIM v0.6+             Last change: 2022 July 03
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -77,7 +77,7 @@ engines are as follows:
 - Apertium <https://apertium.org>
 - Argos Translate <https://translate.argosopentech.com>
 - DeepL <https://www.deepl.com/translator>
-- Google Translate <https://translate.google.com> (WIP)
+- Google Translate <https://translate.google.com>
 - Yandex Translate <https://translate.yandex.com>
 
 
@@ -87,7 +87,7 @@ stability reasons, the philosophy of this plugin is to prioritize official API
 endpoints for which commercial engines usually require some means of
 authentication, e.g., through an API key. If no such key is configured but free
 alternative endpoints exist, these are used as fallback options. Note, however,
-that these are usually severely rate-limited
+that these are often severely rate-limited
 <https://github.com/soimort/translate-shell/issues/370> and in some instances
 produce inferior translations
 <https://github.com/Animenosekai/translate/issues/22>. So if you want to use a
@@ -336,17 +336,46 @@ configuration keys:
 
 GOOGLE TRANSLATE                                    *pantran-google-translate*
 
-WIP
+Google Translate is a machine translation service deployed by Google. The
+implemented default endpoint uses the Google Translate v2/Basic API, for which
+you need to authenticate with a Bearer token or API key for your account. If
+this is not set up, this plugin falls back to unofficial endpoints used
+internally by the web front-ends for Google Translate. Since these endpoints
+are not supported by Google and are also rate-limited, setting up
+authentication is recommended. For |pantran-pantran.setup()| the primary
+endpoint supports the following configuration keys:
+
+
+- `default_source`: Primary source language to use for translation. Default value
+    is `vim.NIL` (i.e., when unset the API will attempt to detect the language
+    automatically).
+- `default_target`: Primary target language to use for translation. Default value
+    is `"en"`.
+- `bearer_token`: The token to use for this engine. Defaults to
+    `vim.env.GOOGLE_BEARER_TOKEN` (i.e., an environment variable).
+- `api_key`: It is also possible to create an API key for authentication. Since
+    API keys do not expire (unlike Bearer tokens) this authentication method is
+    simpler. This has precedence over `bearer_token`. Defaults to
+    `vim.env.GOOGLE_API_KEY` (i.e., an environment variable).
+- `format`: Format of the text. Possible values are `"text"` (default) and
+    `"html"`.
+- `fallback`: Table with configuration options for the fallback endpoint. It
+    accepts the following keys:
+    - `default_source`: Primary source language to use for translation. Default value
+        is `"auto"`.
+    - `default_target`: Primary target language to use for translation. Default value
+        is `"en"`.
+
 
 YANDEX TRANSLATE                                    *pantran-yandex-translate*
 
 Yandex Translate is a web service provided by Yandex for machine translation.
 The default endpoint uses the Yandex Translate v2 API, for which you need to
-authenticate with an IAM token for your account. If you do not have an account
-this plugin falls back to the old Yandex Translate v1 API which works without
-authentication. Note, however that this endpoint is deprecated and thus might
-stop working any time. For |pantran-pantran.setup()| the primary v2 endpoint
-supports the following configuration keys:
+authenticate with an IAM token or API key for your account. If you do not have
+an account this plugin falls back to the old Yandex Translate v1 API which
+works without authentication. Note, however that this endpoint is deprecated
+and thus might stop working any time. For |pantran-pantran.setup()| the primary
+v2 endpoint supports the following configuration keys:
 
 
 - `default_source`: Primary source language to use for translation. Default value
@@ -356,6 +385,10 @@ supports the following configuration keys:
     is `"en"`.
 - `iam_token`: The token to use for this engine. Defaults to
     `vim.env.YANDEX_IAM_TOKEN` (i.e., an environment variable).
+- `api_key`: Service accounts can also use an API key for authentication. Since
+    API keys do not expire (unlike IAM tokens) this authentication method is
+    simpler. This has precedence over `iam_token`. Defaults to
+    `vim.env.YANDEX_API_KEY` (i.e., an environment variable).
 - `folder_id`: A folder is an isolated space where Yandex Cloud resources are
     created and grouped. Setting this is only required for user accounts. Defaults
     to `vim.env.YANDEX_FOLDER_ID` (i.e., an environment variable).
