@@ -93,7 +93,7 @@ supported engines are as follows:
 * [Apertium](https://apertium.org)
 * [Argos Translate](https://translate.argosopentech.com)
 * [DeepL](https://www.deepl.com/translator)
-* [Google Translate](https://translate.google.com) (WIP)
+* [Google Translate](https://translate.google.com)
 * [Yandex Translate](https://translate.yandex.com)
 
 Some of these engines are free and open-source and can be used right off the

@@ -5,6 +5,7 @@ local engines = {
   apertium = require("pantran.engines.apertium"),
   argos  = require("pantran.engines.argos"),
   deepl  = require("pantran.engines.deepl"),
+  google  = require("pantran.engines.google"),
   yandex = require("pantran.engines.yandex"),
   _mt = {
     __index = {

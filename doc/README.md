@@ -266,7 +266,41 @@ informal language. Possible values are `"default"` (default), `"more"`, and
 `"less"`.
 
 ## Google Translate
-WIP
+Google Translate is a machine translation service deployed by Google. The
+implemented default endpoint uses the Google Translate v2/Basic API, for which
+you need to authenticate with a Bearer token or API key for your account. If
+this is not set up, this plugin falls back to unofficial endpoints used
+internally by the web front-ends for Google Translate. Since these endpoints
+are not supported by Google and are also rate-limited, setting up
+authentication is recommended. For [pantran.setup()](#pantransetupopts) the
+primary endpoint supports the following configuration keys:
+
+* `default_source`: Primary source language to use for translation. Default
+value is `vim.NIL` (i.e., when unset the API will attempt to detect the
+language automatically).
+
+* `default_target`: Primary target language to use for translation. Default
+value is `"en"`.
+
+* `bearer_token`: The token to use for this engine. Defaults to
+`vim.env.GOOGLE_BEARER_TOKEN` (i.e., an environment variable).
+
+* `api_key`: It is also possible to create an API key for authentication.
+  Since API keys do not expire (unlike Bearer tokens) this authentication method
+  is simpler. This has precedence over `bearer_token`. Defaults to
+  `vim.env.GOOGLE_API_KEY` (i.e., an environment variable).
+
+* `format`: Format of the text. Possible values are `"text"` (default)
+and `"html"`.
+
+* `fallback`: Table with configuration options for the fallback endpoint. It
+  accepts the following keys:
+
+  * `default_source`: Primary source language to use for translation. Default
+  value is `"auto"`.
+
+  * `default_target`: Primary target language to use for translation. Default
+  value is `"en"`.
 
 ## Yandex Translate
 Yandex Translate is a web service provided by Yandex for machine translation.
