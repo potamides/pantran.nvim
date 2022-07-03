@@ -16,7 +16,7 @@ local yandex = {
 }
 
 function yandex.detect(text)
-  local detected = yandex._api:get("detect", {
+  local detected = yandex._api:post("detectLanguage", {
     text = text,
   })
 
@@ -26,12 +26,12 @@ end
 function yandex.languages()
   local languages = {
     source = {
-      auto = "Auto"
+      [vim.NIL] = "Auto"
     },
     target = {}
   }
 
-  local langs = yandex._api:get("languages").languages
+  local langs = yandex._api:post("listLanguages").languages
   for _, lang in pairs(langs) do
     languages.source[lang.code] = lang.name
     languages.target[lang.code] = lang.name
@@ -68,7 +68,7 @@ end
 function yandex.setup()
   yandex._api = curl.new{
     url = yandex.url,
-    static_paths = {"languages"},
+    static_paths = {"listLanguages"},
     fmt_error = function(response) return response.message end,
     headers = {
       authorization = ("Bearer %s"):format(yandex.config.iam_token)
