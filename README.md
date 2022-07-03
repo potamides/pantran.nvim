@@ -14,10 +14,14 @@ enough, pantran.nvim can also be used as an API.
   <img src="https://media.giphy.com/media/9AIdwhAnzTb7AqHYeC/giphy.gif" alt="Pantran Demonstration"/>
 </p>
 
+**Warning**: This is beta quality software. It should run stable for the most
+part, but don't be too surprised if you find a few bugs here and there. Use at
+your own risk!
+
 # Installation
-You need at least [Neovim v0.6+](https://neovim.io/) and
-[curl](https://curl.se/) to be able to use this plugin. You can install it
-using your favorite plugin manager.
+You need at least [Neovim v0.6.0](https://neovim.io/) and
+[curl v7.76.0](https://curl.se/) to be able to use this plugin. You can
+install it using your favorite plugin manager.
 
 With [vim-plug](https://github.com/junegunn/vim-plug):
 ```viml
@@ -102,7 +106,7 @@ For stability reasons, the philosophy of this plugin is to prioritize official
 API endpoints for which commercial engines usually require some means of
 authentication, e.g., through an API key. If no such key is configured but
 free alternative endpoints exist, these are used as fallback options. Note,
-however, that these are usually [severely
+however, that these are often [severely
 rate-limited](https://github.com/soimort/translate-shell/issues/370) and in
 some instances produce [inferior
 translations](https://github.com/Animenosekai/translate/issues/22). So if you
