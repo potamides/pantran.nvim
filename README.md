@@ -10,7 +10,7 @@ that, other (non-interactive) modes are also supported and, if you try hard
 enough, pantran.nvim can also be used as an API.
 
 <!-- panvimdoc-ignore-start -->
-[Pantran.nvim demonstration](https://user-images.githubusercontent.com/53401822/177118656-1bc1643e-727f-4680-b83d-766de74b0d8b.mp4)
+[Pantran.nvim demonstration](https://user-images.githubusercontent.com/53401822/177125473-572c8ebf-fd5c-448f-827c-f6992e24bb02.mp4)
 
 **Warning**: This is beta quality software. It should run stable for the most
 part, but don't be too surprised if you find a few bugs here and there. Use at
