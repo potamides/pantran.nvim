@@ -156,16 +156,16 @@ function google.translate(text, source, target)
     })
 
     if ok then
-      translation = vim.tbl_flatten(translation)
-      if #translation <= 2 then
+      if #translation == 1 then -- clients5.google.com
+        translation = vim.tbl_flatten(translation)
         return {
           text = translation[1],
           detected = translation[2]
         }
-      else
+      else -- translate.googleapis.com
         return {
-          text = translation[1],
-          detected = source == "auto" and translation[#translation] or nil
+          text = table.concat(vim.tbl_map(function(tbl) return tbl[1] end, translation[1])),
+          detected = source == "auto" and translation[3] or nil
         }
       end
     end
