@@ -236,7 +236,7 @@ function window:enter(noautocmd, startinsert)
 end
 
 function window:exit(noautocmd)
-  self._enter_win(vim.fn.winnr("#"), noautocmd)
+  self._enter_win(vim.fn.win_getid(vim.fn.winnr("#")), noautocmd)
 end
 
 function window._create(conf)
