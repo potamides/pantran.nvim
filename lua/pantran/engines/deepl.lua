@@ -68,6 +68,10 @@ function deepl.translate(text, source, target)
   }
 end
 
+function deepl.detect(text)
+  return deepl.translate(text, vim.NIL).detected
+end
+
 function deepl.setup()
   deepl._api = curl.new{
     url = deepl.url_template:format(deepl.config.free_api and "-free" or ""),
