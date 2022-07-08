@@ -83,7 +83,8 @@ function google.setup()
   }
 end
 
+config.apply(config.user.engines.google, google)
 if google.config.bearer_token or google.config.api_key then
-  return config.apply(config.user.engines.google, google)
+  return google
 end
 return fallback

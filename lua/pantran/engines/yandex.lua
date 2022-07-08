@@ -82,7 +82,8 @@ function yandex.setup()
   }
 end
 
+config.apply(config.user.engines.yandex, yandex)
 if yandex.config.iam_token or yandex.config.api_key then
-  return config.apply(config.user.engines.yandex, yandex)
+  return yandex
 end
 return fallback
