@@ -79,12 +79,12 @@ end
 function command.range_translate(opts)
   local srow, erow, scol, ecol
   srow, scol = vim.api.nvim_win_get_cursor(0)[1] - 1, 0
-  erow = srow + math.max(0, vim.v.count - 1)
+  erow = srow + math.max(0, (opts.count or vim.v.count) - 1)
   ecol = #vim.api.nvim_buf_get_lines(0, erow, erow + 1, true)[1] - 1
 
   local marks = command._coords2marks{srow = srow, scol = scol, erow = erow, ecol = ecol}
   local input = table.concat(uapi.nvim_buf_get_text(0, srow, scol, erow + 1, ecol + 1), "\n")
-  command._translate(input, vim.v.count > 0, marks, opts)
+  command._translate(input, (opts.count or vim.v.count) > 0, marks, opts)
 end
 
 local _opts
@@ -110,8 +110,8 @@ function command.motion_translate(arg)
   command._translate(input, true, marks, _opts)
 end
 
-function command.parse(...)
-  local opts = {}
+function command.parse(line1, line2, ...)
+  local opts = {count = line2 ~= -1 and line2 - (line1 - 1)}
 
   for _, arg in ipairs{...} do
     local key, value = arg:match("(.-)=(.+)")
