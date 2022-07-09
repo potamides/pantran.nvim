@@ -1,3 +1,3 @@
 set rtp+=.
-set rtp+=../pantran.nvim
-runtime! plugin/pantran.vim
+set rtp+=../plenary.nvim
+runtime! plugin/plenary.vim plugin/pantran.vim
