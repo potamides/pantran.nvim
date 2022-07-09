@@ -36,8 +36,9 @@ local co = async.run(describe, "handler", function()
   end)
 
   it('can replace text', function()
+    local erow = #vim.split(text, "\n") - 1
     local ecol = #table.remove(vim.split(text, "\n")) - 1
-    handlers.replace(line, {ecol = ecol, erow = -1, scol = 0, srow = 0})
+    handlers.replace(line, {ecol = ecol, erow = erow, scol = 0, srow = 0})
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
     assert.are.equal(#lines, 1)
     assert.are.equal(lines[1], line)
