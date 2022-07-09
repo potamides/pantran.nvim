@@ -16,7 +16,7 @@ function s:pantran_complete(...)
 endfunction
 
 command -range -nargs=* -complete=custom,s:pantran_complete Pantran
-  \ lua require("pantran.command").parse(unpack{<f-args>})
+  \ lua require("pantran.command").parse(<line1>, <count>, unpack{<f-args>})
 
 "" Highlights
 " -----------------------------------------------------------------------------
