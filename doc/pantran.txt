@@ -1,4 +1,4 @@
-*pantran.txt*             For NVIM v0.6+             Last change: 2022 July 04
+*pantran.txt*             For NVIM v0.6+             Last change: 2022 July 10
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -17,13 +17,6 @@ Table of Contents                                  *pantran-table-of-contents*
   - Select Mode                                          |pantran-select-mode|
 6. Highlight Groups                                 |pantran-highlight-groups|
 7. Programmatical Usage                         |pantran-programmatical-usage|
-
-With pantran.nvim, you can use your favorite machine translation engines
-without having to leave your favorite editor. It makes use of Neovim’s
-|api-floatwin| to implement an asynchronous, interactive machine translation
-interface, similar to how most of the various machine translation web font-ends
-work. In addition to that, other (non-interactive) modes are also supported
-and, if you try hard enough, pantran.nvim can also be used as an API.
 
 ==============================================================================
 1. Quickstart                                             *pantran-quickstart*
