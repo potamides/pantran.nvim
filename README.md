@@ -1,5 +1,7 @@
 <!-- panvimdoc-ignore-start -->
 # Pantran.nvim
+[![tests](https://github.com/potamides/pantran.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/potamides/pantran.nvim/actions)
+[![versions](https://img.shields.io/badge/Neovim-v0.6.0%2B-informational?logo=neovim&logoColor=inactive)](https://github.com/neovim/neovim/wiki/Installing-Neovim)
 <!-- panvimdoc-ignore-end -->
 With pantran.nvim, you can use your favorite machine translation engines
 without having to leave your favorite editor. It makes use of Neovim's
