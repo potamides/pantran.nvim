@@ -1,11 +1,14 @@
-# yanked from https://github.com/mfussenegger/nvim-dap/blob/master/.github/workflows/tests.yml
+# based on https://github.com/mfussenegger/nvim-dap/blob/master/.github/workflows/tests.yml
 
-name: Run tests
+name: Tests
 on:
   pull_request: ~
   push:
     branches:
       - main
+  # also run tests monthly since API endpoints might change
+  schedule:
+    - cron: '0 0 1 * *'
 
 jobs:
   build:
