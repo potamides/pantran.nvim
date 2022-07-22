@@ -1,26 +1,19 @@
 local config = require("pantran.config")
-local utable = require("pantran.utils.table")
 
-local engines = {
+local engines = setmetatable({
   apertium = require("pantran.engines.apertium"),
   argos  = require("pantran.engines.argos"),
   deepl  = require("pantran.engines.deepl"),
   google  = require("pantran.engines.google"),
   yandex = require("pantran.engines.yandex"),
-  _mt = {
-    __index = {
-      -- set config in metatable to hide it when iterating engines in main table
-      config = {
-        default_engine = "argos"
-      }
+}, {
+  __index = {
+    -- set config in metatable to hide it when iterating engines in main table
+    config = {
+      default_engine = rawget(config.user, "default_engine") or "argos"
     }
   }
-}
-
-config.apply(
-  config.user.engines,
-  setmetatable(engines, utable.pop(engines, "_mt"))
-)
+})
 
 getmetatable(engines).__index.default = engines[engines.config.default_engine]
 for name, engine in pairs(engines) do

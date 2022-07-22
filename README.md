@@ -123,10 +123,11 @@ is optional.
 
 ```lua
 require("pantran").setup{
+  -- Default engine to use for translation. To list valid engine names run
+  -- `:lua =vim.tbl_keys(require("pantran.engines"))`.
+  default_engine = "argos",
+  -- Configuration for individual engines goes here.
   engines = {
-    -- Configuration for individual engines goes here. To list available
-    -- engine names run `:lua =vim.tbl_keys(require("pantran.engines"))`.
-    default_engine = "argos"
     yandex = {
       -- Default languages can be defined on a per engine basis. In this case
       -- `:lua require("pantran.async").run(function()
@@ -153,9 +154,10 @@ require("pantran").setup{
           ["<C-a>"] = package.loaded.pantran.ui.actions.yank_close_translation
         }
       },
+      -- Keybindings here are used in the selection window.
       select = {
         n = {
-          -- Keybindings here are used in the selection window.
+          -- ...
         }
       }
     }
