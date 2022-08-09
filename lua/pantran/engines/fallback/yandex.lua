@@ -30,21 +30,14 @@ function yandex.detect(text)
 end
 
 function yandex.languages()
-  local languages = {
-    source = {
-      auto = "Auto"
-    },
-    target = {}
-  }
-
   -- without ui parameter this does not return codes.langs
   local codes = yandex._api:get("getLangs", {ui = true})
 
-  for _, pair in pairs(codes.dirs) do
-    local src, tgt = pair:match("(%w+)-(%w+)")
-    languages.source[src] = codes.langs[src]
-    languages.target[tgt] = codes.langs[tgt]
-  end
+  local languages = {
+    source = vim.tbl_extend("error", {auto = "Auto"}, codes.langs),
+    target = codes.langs
+  }
+
   return languages
 end
 
