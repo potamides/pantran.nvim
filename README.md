@@ -58,7 +58,7 @@ following recommended keybindings:
 <summary>Neovim 0.7+</summary>
 
 ```lua
-local opts = {noremap = true, silent = true}
+local opts = {noremap = true, silent = true, expr = true}
 vim.keymap.set("n", "<leader>tr", pantran.motion_translate, opts)
 vim.keymap.set("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, opts)
 vim.keymap.set("x", "<leader>tr", pantran.motion_translate, opts)
@@ -68,7 +68,7 @@ vim.keymap.set("x", "<leader>tr", pantran.motion_translate, opts)
 <details><summary>Neovim 0.6</summary>
 
 ```lua
-local opts = {noremap = true, silent = true}
+local opts = {noremap = true, silent = true, expr = true}
 vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
 vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('pantran').motion_translate() .. '_'")]], opts)
 vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
