@@ -1,4 +1,4 @@
-*pantran.txt*             For NVIM v0.6+             Last change: 2022 July 22
+*pantran.txt*           For NVIM v0.6+          Last change: 2022 September 05
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -32,7 +32,7 @@ to the following recommended keybindings:
 Neovim 0.7+
 
 >
-    local opts = {noremap = true, silent = true}
+    local opts = {noremap = true, silent = true, expr = true}
     vim.keymap.set("n", "<leader>tr", pantran.motion_translate, opts)
     vim.keymap.set("n", "<leader>trr", function() return pantran.motion_translate() .. "_" end, opts)
     vim.keymap.set("x", "<leader>tr", pantran.motion_translate, opts)
@@ -42,7 +42,7 @@ Neovim 0.7+
 Neovim 0.6
 
 >
-    local opts = {noremap = true, silent = true}
+    local opts = {noremap = true, silent = true, expr = true}
     vim.api.nvim_set_keymap("n", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
     vim.api.nvim_set_keymap("n", "<leader>trr", [[luaeval("require('pantran').motion_translate() .. '_'")]], opts)
     vim.api.nvim_set_keymap("x", "<leader>tr", [[luaeval("require('pantran').motion_translate()")]], opts)
