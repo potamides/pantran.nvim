@@ -61,7 +61,7 @@ end
 function command._translate(input, initialize, marks, opts)
   opts = opts or {}
   opts.mode = opts.mode or command.config.default_mode
-  opts.engine = opts.engine or "default"
+  opts.engine = opts.engine or config.user.default_engine
   opts.source = opts.source or engines[opts.engine].config.default_source
   opts.target = opts.target or engines[opts.engine].config.default_target
   local engine = protected.wrap(engines[opts.engine])
