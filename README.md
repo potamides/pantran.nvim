@@ -45,7 +45,7 @@ use {
 Run the command `:Pantran` to open an interactive translation window and start
 typing to get an understanding of how things work. Type `g?` in normal mode or
 `i_CTRL-/` in insert mode to open a help buffer with available keybindings.
-`:Pantran` also supports command ranges to initialize the translation winodw.
+`:Pantran` also supports command ranges to initialize the translation window.
 Further, some optional flags for configuration of the translation process are
 available<!-- panvimdoc-ignore-start -->, consult the
 [documentation](doc/README.md) for more details<!-- panvimdoc-ignore-end -->.
