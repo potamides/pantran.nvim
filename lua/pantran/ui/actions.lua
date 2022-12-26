@@ -1,3 +1,7 @@
+local require = require("pantran.utils.lazy").require
+-- Require the following modules lazily. This is necessary since the actions
+-- module might be loaded before setup is invoked, and user configuration
+-- options might not be applied otherwise.
 local async = require("pantran.async")
 local engines = require("pantran.engines")
 local handlers = require("pantran.handlers")

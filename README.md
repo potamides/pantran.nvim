@@ -151,7 +151,7 @@ require("pantran").setup{
           -- Similar table but for insert mode. Using 'false' disables
           -- existing keybindings.
           ["<C-y>"] = false,
-          ["<C-a>"] = package.loaded.pantran.ui.actions.yank_close_translation
+          ["<C-a>"] = require("pantran.ui.actions").yank_close_translation
         }
       },
       -- Keybindings here are used in the selection window.
