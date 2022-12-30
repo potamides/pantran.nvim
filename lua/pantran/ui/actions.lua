@@ -115,8 +115,8 @@ end)
 
 actions.select_engine = async.wrap(function(ui)
   ui:lock()
-  ui:select_left(vim.tbl_map(function(v) return v.name end, engines), nil, function(name)
-    local engine = vim.tbl_filter(function(v) return v.name == name end, engines)[1]
+  ui:select_left(vim.tbl_map(function(v) return v.name end, engines()), nil, function(name)
+    local engine = vim.tbl_filter(function(v) return v.name == name end, engines())[1]
     if engine then
       ui.engine = protected.wrap(engine)
       ui.source = engine.config.default_source
