@@ -7,7 +7,7 @@ With pantran.nvim, you can use your favorite machine translation engines
 without having to leave your favorite editor. It makes use of Neovim's
 [api-floatwin](https://neovim.io/doc/user/api.html#api-floatwin) to implement
 an asynchronous, interactive machine translation interface, similar to how
-most of the various machine translation web font-ends work. In addition to
+most of the various machine translation web front-ends work. In addition to
 that, other (non-interactive) modes are also supported and, if you try hard
 enough, pantran.nvim can also be used as an API.
 
