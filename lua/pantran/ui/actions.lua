@@ -1,3 +1,7 @@
+local require = require("pantran.utils.lazy").require
+-- Require the following modules lazily. This is necessary since the actions
+-- module might be loaded before setup is invoked, and user configuration
+-- options might not be applied otherwise.
 local async = require("pantran.async")
 local engines = require("pantran.engines")
 local handlers = require("pantran.handlers")
@@ -111,8 +115,8 @@ end)
 
 actions.select_engine = async.wrap(function(ui)
   ui:lock()
-  ui:select_left(vim.tbl_map(function(v) return v.name end, engines), nil, function(name)
-    local engine = vim.tbl_filter(function(v) return v.name == name end, engines)[1]
+  ui:select_left(vim.tbl_map(function(v) return v.name end, engines()), nil, function(name)
+    local engine = vim.tbl_filter(function(v) return v.name == name end, engines())[1]
     if engine then
       ui.engine = protected.wrap(engine)
       ui.source = engine.config.default_source

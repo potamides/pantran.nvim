@@ -1,4 +1,4 @@
-*pantran.txt*           For NVIM v0.6+          Last change: 2022 September 05
+*pantran.txt*             For NVIM v0.6+            Last change: 2023 March 09
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -24,7 +24,7 @@ Table of Contents                                  *pantran-table-of-contents*
 Run the command `:Pantran` to open an interactive translation window and start
 typing to get an understanding of how things work. Type `g?` in normal mode or
 `i_CTRL-/` in insert mode to open a help buffer with available keybindings.
-`:Pantran` also supports command ranges to initialize the translation winodw.
+`:Pantran` also supports command ranges to initialize the translation window.
 Further, some optional flags for configuration of the translation process are
 available. If you plan to translate frequently, the command can also be mapped
 to the following recommended keybindings:

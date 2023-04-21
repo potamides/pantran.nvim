@@ -7,7 +7,7 @@ With pantran.nvim, you can use your favorite machine translation engines
 without having to leave your favorite editor. It makes use of Neovim's
 [api-floatwin](https://neovim.io/doc/user/api.html#api-floatwin) to implement
 an asynchronous, interactive machine translation interface, similar to how
-most of the various machine translation web font-ends work. In addition to
+most of the various machine translation web front-ends work. In addition to
 that, other (non-interactive) modes are also supported and, if you try hard
 enough, pantran.nvim can also be used as an API.
 
@@ -45,7 +45,7 @@ use {
 Run the command `:Pantran` to open an interactive translation window and start
 typing to get an understanding of how things work. Type `g?` in normal mode or
 `i_CTRL-/` in insert mode to open a help buffer with available keybindings.
-`:Pantran` also supports command ranges to initialize the translation winodw.
+`:Pantran` also supports command ranges to initialize the translation window.
 Further, some optional flags for configuration of the translation process are
 available<!-- panvimdoc-ignore-start -->, consult the
 [documentation](doc/README.md) for more details<!-- panvimdoc-ignore-end -->.
@@ -151,7 +151,7 @@ require("pantran").setup{
           -- Similar table but for insert mode. Using 'false' disables
           -- existing keybindings.
           ["<C-y>"] = false,
-          ["<C-a>"] = package.loaded.pantran.ui.actions.yank_close_translation
+          ["<C-a>"] = require("pantran.ui.actions").yank_close_translation
         }
       },
       -- Keybindings here are used in the selection window.
