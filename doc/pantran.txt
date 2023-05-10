@@ -1,4 +1,4 @@
-*pantran.txt*             For NVIM v0.6+            Last change: 2023 March 09
+*pantran.txt*              For NVIM v0.6+             Last change: 2023 May 10
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -292,7 +292,7 @@ web-app and API built on top of it is called LibreTranslate. For
 - `default_target`: Primary target language to use for translation. Default value
     is `"en"`.
 - `url`: URL of the Argos Translate instance to use. Defaults to
-    `"https://translate.argosopentech.com"`.
+    `"https://translate.terraprint.co"`.
 - `api_key`: Some Argos Translate instances require an API key to control
     traffic. The configured default instance does not, so you don’t need to set
     it. If you change the instance, however, you might also need to configure an
