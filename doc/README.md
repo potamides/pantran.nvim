@@ -226,7 +226,7 @@ value is `"auto"`.
 value is `"en"`.
 
 * `url`: URL of the Argos Translate instance to use. Defaults to
-`"https://translate.argosopentech.com"`.
+`"https://translate.terraprint.co"`.
 
 * `api_key`: Some Argos Translate instances require an API key to control
 traffic. The configured default instance does not, so you don't need to set
