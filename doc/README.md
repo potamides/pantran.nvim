@@ -406,8 +406,8 @@ through a range or a movement). Note that `<C-_>` is the key from pressing
 |`k`     |select\_prev  |Select previous item in the list.                   |
 |`<Down>`|select\_next  |Select next item in the list.                       |
 |`<Up>`  |select\_prev  |Select previous item in the list.                   |
-|`gg`    |select\_first |Select first item in the list.                       |
-|`G`     |select\_last  |Select last item in the list.                   |
+|`gg`    |select\_first |Select first item in the list.                      |
+|`G`     |select\_last  |Select last item in the list.                       |
 |`<Cr>`  |select\_choose|Choose current item and exit selection mode.        |
 |`<Esc>` |select\_abort |Abort current selection.                            |
 |`q`     |select\_abort |Abort current selection.                            |
