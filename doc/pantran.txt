@@ -1,4 +1,4 @@
-*pantran.txt*              For NVIM v0.6+             Last change: 2023 May 10
+*pantran.txt*             For NVIM v0.6+             Last change: 2023 June 05
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
@@ -460,8 +460,8 @@ SELECT MODE                                              *pantran-select-mode*
 │k         │select_prev  │Select previous item in the list.           │
 │<Down>    │select_next  │Select next item in the list.               │
 │<Up>      │select_prev  │Select previous item in the list.           │
-│gg        │select_first │Select next item in the list.               │
-│G         │select_last  │Select previous item in the list.           │
+│gg        │select_first │Select first item in the list.              │
+│G         │select_last  │Select last item in the list.               │
 │<Cr>      │select_choose│Choose current item and exit selection mode.│
 │<Esc>     │select_abort │Abort current selection.                    │
 │q         │select_abort │Abort current selection.                    │
