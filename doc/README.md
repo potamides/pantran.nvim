@@ -36,6 +36,9 @@ connecting to a server. Accepts the following keys:
   * `timeout`: Maximum time in seonds that curl's connection is allowed to
   take. Defaults to `15`.
 
+  * `user_args`: List of additional arguments passed to curl, for example to
+    specify a proxy. Defaults to an empty table.
+
 * `help`: Table which configures the appearance of the help pop up window.
   Accepts the following keys:
 
