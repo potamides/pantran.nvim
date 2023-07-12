@@ -5,13 +5,14 @@ local curl = {
   config = {
     cmd = "curl",
     retry = 3,
-    timeout = 15
-  }
+    timeout = 15,
+    user_args = {}
+  },
 }
 
 function curl:_spawn(request, path, data, callback)
   local cmd, stdout, response, handle = self.config.cmd, vim.loop.new_pipe(), ""
-  local args = {
+  local args =vim.tbl_extend("keep", self.config.user_args, {
     "--fail-with-body",
     "--retry", self.config.retry,
     "--max-time", self.config.timeout,
@@ -19,7 +20,7 @@ function curl:_spawn(request, path, data, callback)
     "--request", request,
     "--header", "accept: application/json",
     tostring(self._url / path)
-  }
+  })
 
   for key, value in pairs(vim.tbl_extend("error", self._data, data)) do
     table.insert(args, 1, ("%s=%s"):format(key, value))
