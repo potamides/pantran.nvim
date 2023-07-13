@@ -1,4 +1,4 @@
-*pantran.txt*             For NVIM v0.6+             Last change: 2023 July 12
+*pantran.txt*             For NVIM v0.6+             Last change: 2023 July 13
 
 ==============================================================================
 Table of Contents                                  *pantran-table-of-contents*
