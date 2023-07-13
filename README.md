@@ -19,7 +19,7 @@ part, but don't be too surprised if you find a few bugs here and there. Use at
 your own risk!
 
 # Installation
-You need at least [Neovim v0.6.0](https://neovim.io/) and
+You need at least [Neovim v0.6.1](https://neovim.io/) and
 [curl v7.76.0](https://curl.se/) to be able to use this plugin. You can
 install it using your favorite plugin manager.
 
