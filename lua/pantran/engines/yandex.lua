@@ -17,7 +17,7 @@ local yandex = {
 }
 
 function yandex.detect(text)
-  local detected = yandex._api:post("detectLanguage", {
+  local detected = yandex._api:post("detect", {
     text = text,
   })
 
@@ -32,7 +32,7 @@ function yandex.languages()
     target = {}
   }
 
-  local langs = yandex._api:post("listLanguages").languages
+  local langs = yandex._api:post("languages").languages
   for _, lang in pairs(langs) do
     languages.source[lang.code] = lang.name
     languages.target[lang.code] = lang.name
@@ -71,10 +71,11 @@ function yandex.setup()
 
   yandex._api = curl.new{
     url = yandex.url,
-    static_paths = {"listLanguages"},
+    static_paths = {"languages"},
     fmt_error = function(response) return response.message end,
     headers = {
-      authorization = c.api_key and ("Api-Key %s"):format(c.api_key) or ("Bearer %s"):format(c.iam_token)
+      ["Content-Type"] = "application/json",
+      ["Authorization"] = c.api_key and ("Api-Key %s"):format(c.api_key) or ("Bearer %s"):format(c.iam_token)
     },
     data = {
       folderId = c.folder_id,
