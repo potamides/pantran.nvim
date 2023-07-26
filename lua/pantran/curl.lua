@@ -23,7 +23,7 @@ function curl:_spawn(request, path, data, callback)
   })
 
   if self._headers["Content-Type"] == "application/json" then
-    table.insert(args, 1, vim.json.encode(vim.tbl_extend("error", self._data, data)))
+    table.insert(args, 1, vim.json.encode(vim.tbl_extend("error", vim.empty_dict(), self._data, data)))
     table.insert(args, 1, "--data")
   else
     for key, value in pairs(vim.tbl_extend("error", self._data, data)) do
@@ -123,7 +123,7 @@ end
 function curl.new(args)
   local self = {
     _url = curl.url(args.url),
-    _data = vim.tbl_extend("error", vim.empty_dict(), args.data or {}),
+    _data = args.data or {},
     _headers = args.headers or {},
     _static_paths = args.static_paths or {},
     _fmt_error = args.fmt_error or function(rsp) return tostring(rsp) end,
