@@ -12,7 +12,7 @@ local curl = {
 
 function curl:_spawn(request, path, data, callback)
   local cmd, stdout, response, handle = self.config.cmd, vim.loop.new_pipe(), ""
-  local args =vim.tbl_extend("keep", self.config.user_args, {
+  local args = vim.tbl_extend("keep", self.config.user_args, {
     "--fail-with-body",
     "--retry", self.config.retry,
     "--max-time", self.config.timeout,
@@ -22,9 +22,14 @@ function curl:_spawn(request, path, data, callback)
     tostring(self._url / path)
   })
 
-  for key, value in pairs(vim.tbl_extend("error", self._data, data)) do
-    table.insert(args, 1, ("%s=%s"):format(key, value))
-    table.insert(args, 1, "--data-urlencode")
+  if self._headers["Content-Type"] == "application/json" then
+    table.insert(args, 1, vim.json.encode(vim.tbl_extend("error", vim.empty_dict(), self._data, data)))
+    table.insert(args, 1, "--data")
+  else
+    for key, value in pairs(vim.tbl_extend("error", self._data, data)) do
+      table.insert(args, 1, ("%s=%s"):format(key, value))
+      table.insert(args, 1, "--data-urlencode")
+    end
   end
 
   for key, value in pairs(self._headers) do
