@@ -146,7 +146,7 @@ require("pantran").setup{
           -- supported.
           ["j"] = "gj",
           ["k"] = "gk"
-        }
+        },
         i = {
           -- Similar table but for insert mode. Using 'false' disables
           -- existing keybindings.
