@@ -152,8 +152,8 @@ function window:set_title(title)
   local title_conf = {
     border = "none",
     zindex =  conf.zindex + 1,
-    row    = conf.row[false], -- FIXME: find out why this is a table
-    col    = conf.col[false] + math.ceil((conf.width - title_len) / 2) + 1,
+    row    = conf.row,
+    col    = conf.col + math.ceil((conf.width - title_len) / 2) + 1,
     width  = title_len,
     height = 1,
   }
@@ -184,7 +184,11 @@ function window:set_config(conf)
 end
 
 function window:get_config()
-  return vim.api.nvim_win_get_config(self.win_id)
+  local conf = vim.api.nvim_win_get_config(self.win_id)
+  -- https://github.com/neovim/neovim/issues/27277
+  conf.row = type(conf.row) =="number" and conf.row or conf.row[false]
+  conf.col = type(conf.col) =="number" and conf.col or conf.col[false]
+  return conf
 end
 
 function window:set_option(option, value)
