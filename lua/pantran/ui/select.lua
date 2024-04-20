@@ -9,7 +9,7 @@ local selector = {
 }
 
 function selector:get_matches()
-  local query, format = self._edit_win:get_virtual(), self._opts.format_item
+  local query, format = self._edit_win:get_virtual():lower(), self._opts.format_item
   local matches = vim.tbl_filter(function(item) return format(item):lower():find(query) end, self._items)
   table.sort(matches, function(a, b) return format(a) < format(b) end)
 
