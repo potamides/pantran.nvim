@@ -15,6 +15,7 @@ local window = {
       linebreak      = true,
       breakindent    = true,
       wrap           = true,
+      showbreak      = "NONE",
       foldcolumn     = "0",
       signcolumn     = "auto",
       colorcolumn    = "",
