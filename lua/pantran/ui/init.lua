@@ -176,7 +176,6 @@ function ui.prop.get:input()
 end
 
 function ui.new(engine, source, target, coords, text)
-  origin_win = vim.api.nvim_get_current_win()
   local win_coords = ui._compute_win_coords()
 
   local self = properties.make(setmetatable({
