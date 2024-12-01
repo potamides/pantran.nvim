@@ -6,8 +6,6 @@ local config = require("pantran.config")
 local properties = require("pantran.utils.properties")
 local bufutils = require("pantran.utils.buffer")
 
-local origin_win = 0
-
 local ui = {
   config = {
     width_percentage = 0.6,
@@ -57,7 +55,7 @@ function ui:close()
   for _, win in pairs(self._win) do
     win:close()
   end
-  vim.api.nvim_set_current_win(origin_win)
+  vim.api.nvim_set_current_win(self._origin_win)
 end
 
 function ui:resize()
@@ -191,6 +189,7 @@ function ui.new(engine, source, target, coords, text)
         translation = window.new(win_coords.translation),
         input = window.new(win_coords.input)
       },
+      _origin_win = vim.api.nvim_get_current_win(),
       coords = coords,
       previous = {} -- store for previous input, source, target, etc.
     }, {__index = ui}))
