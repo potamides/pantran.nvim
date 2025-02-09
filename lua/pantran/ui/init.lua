@@ -55,7 +55,7 @@ function ui:close()
   for _, win in pairs(self._win) do
     win:close()
   end
-  vim.api.nvim_set_current_win(self._origin_win)
+  pcall(vim.api.nvim_set_current_win, self._origin_win)
 end
 
 function ui:resize()
