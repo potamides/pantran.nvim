@@ -3,7 +3,7 @@ local config = require("pantran.config")
 local window = {
   config = {
     title_border = {"┤ ", " ├"},
-    window_config = {
+    win_config = {
       relative = "editor",
       border   = "single"
     },
@@ -178,7 +178,7 @@ function window:set_title(title)
 end
 
 function window:set_config(conf)
-  vim.api.nvim_win_set_config(self.win_id, vim.tbl_extend("force", window.config.window_config, conf))
+  vim.api.nvim_win_set_config(self.win_id, vim.tbl_extend("force", window.config.win_config, conf))
   if self.title then
     self:set_title(self._title)
   end
@@ -245,7 +245,7 @@ function window:exit(noautocmd)
 end
 
 function window._create(conf)
-  conf = vim.tbl_extend("force", window.config.window_config, conf)
+  conf = vim.tbl_extend("force", window.config.win_config, conf)
 
   -- use own buffer for virtual text, as due to some current issues mentioned
   -- above the actual text needs to be modified which would affect undo
