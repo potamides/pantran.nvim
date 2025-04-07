@@ -17,6 +17,8 @@ function config.set(userconf)
 end
 
 function config.apply(userconf, object)
+  -- vim.tbl_deep_extend doesn't like custom metatables
+  userconf = deep_setmetatable(vim.deepcopy(userconf))
   object.config = vim.tbl_deep_extend("force", object.config, userconf)
   return object
 end
