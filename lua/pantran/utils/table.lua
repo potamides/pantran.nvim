@@ -59,4 +59,11 @@ function table.zip(...)
   end
 end
 
+function table.add_reverse_lookup(o)
+  for _, k in ipairs(vim.tbl_keys(o)) do
+    o[o[k]] = k
+  end
+  return o
+end
+
 return table

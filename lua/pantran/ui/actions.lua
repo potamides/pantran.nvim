@@ -7,6 +7,7 @@ local engines = require("pantran.engines")
 local handlers = require("pantran.handlers")
 local help = require("pantran.ui.help")
 local protected = require("pantran.utils.protected")
+local utable = require("pantran.utils.table")
 local actions = {}
 
 function actions.help()
@@ -153,4 +154,4 @@ function actions.select_last(ui)
 end
 
 -- we add reverse lookup so that we can easily get the names of actions
-return vim.tbl_add_reverse_lookup(actions)
+return utable.add_reverse_lookup(actions)
